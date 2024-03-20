@@ -23,10 +23,10 @@
 define( 'DB_NAME', 'la_casa_del_tapicero' );
 
 /** Database username */
-define( 'DB_USER', 'eric' );
+define( 'DB_USER', 'juanm' );
 
 /** Database password */
-define( 'DB_PASSWORD', '1234' );
+define( 'DB_PASSWORD', 'lC_]erzLfR2@q6UJ' );
 
 /** Database hostname */
 define( 'DB_HOST', 'localhost' );
