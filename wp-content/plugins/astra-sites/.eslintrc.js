@@ -74,5 +74,6 @@ module.exports = {
 		Image: true,
 		requestAnimationFrame: true,
 		EventSource: true,
+		ResizeObserver: true,
 	},
 };

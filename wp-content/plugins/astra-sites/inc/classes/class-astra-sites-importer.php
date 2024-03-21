@@ -377,37 +377,19 @@ if ( ! class_exists( 'Astra_Sites_Importer' ) ) {
 			if ( ! current_user_can( 'edit_posts' ) ) {
 				wp_send_json_error();
 			}
-			$url = astra_get_site_data( 'astra-site-spectra-settings' );
-			if ( ! astra_sites_is_valid_url( $url ) ) {
-				/* Translators: %s is XML URL. */
-				wp_send_json_error( sprintf( __( 'Invalid XML Request URL - %s', 'astra-sites' ), $url ) );
+
+			if ( ! is_callable( 'UAGB_Admin_Helper::get_instance' ) ) {
+				wp_send_json_error(
+					array(
+						'success' => false,
+						'message' => __( 'Can\'t import Spectra Settings. Spectra Plugin is not activated.', 'astra-sites' ),
+					) 
+				);
 			}
-
-			if ( ! empty( $url ) && is_callable( 'UAGB_Admin_Helper::get_instance' ) ) {
-
-				// Download JSON file.
-				$file_path = Astra_Sites_Helper::download_file( $url );
-
-				if ( $file_path['success'] ) {
-					if ( isset( $file_path['data']['file'] ) ) {
-
-						$ext = strtolower( pathinfo( $file_path['data']['file'], PATHINFO_EXTENSION ) );
-
-						if ( 'json' === $ext ) {
-							$settings = json_decode( Astra_Sites::get_instance()->get_filesystem()->get_contents( $file_path['data']['file'] ), true );
-
-							if ( ! empty( $settings ) ) {
-								UAGB_Admin_Helper::get_instance()->update_admin_settings_shareable_data( $settings );
-							}
-						} else {
-							wp_send_json_error( __( 'Invalid file for Spectra Settings', 'astra-sites' ) );
-						}
-					} else {
-						wp_send_json_error( __( 'There was an error downloading the Spectra Settings file.', 'astra-sites' ) );
-					}
-				} else {
-					wp_send_json_error( __( 'There was an error downloading the Spectra Settings file.', 'astra-sites' ) );
-				}
+			
+			$settings = astra_get_site_data( 'astra-site-spectra-options' );
+			if ( ! empty( $settings ) ) {
+				UAGB_Admin_Helper::get_instance()->update_admin_settings_shareable_data( $settings );
 			}
 
 			if ( defined( 'WP_CLI' ) ) {
@@ -802,6 +784,10 @@ if ( ! class_exists( 'Astra_Sites_Importer' ) ) {
 				if ( ! current_user_can( 'customize' ) ) {
 					wp_send_json_error( __( 'You are not allowed to perform this action', 'astra-sites' ) );
 				}
+			}
+			$uuid = isset( $_POST['uuid'] ) ? sanitize_text_field( $_POST['uuid'] ) : '';
+			if ( ! empty( $uuid ) ) {
+				update_option( 'astra_sites_ai_import_started', 'yes', 'no' );
 			}
 			do_action( 'st_before_start_import_process' );
 			set_transient( 'astra_sites_import_started', 'yes', HOUR_IN_SECONDS );

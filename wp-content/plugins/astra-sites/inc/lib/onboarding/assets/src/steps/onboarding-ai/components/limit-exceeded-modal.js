@@ -31,7 +31,45 @@ const LimitExceedModal = ( { onOpenChange, openTarget = '_blank' } ) => {
 	const teamPlanInfo = (
 		<span>
 			Your current active organisation is { teamName }, which is on the{ ' ' }
-			{ planName } plan
+			{ planName } plan.
+		</span>
+	);
+
+	const dailyLimit = (
+		<span className="zw-base-semibold text-app-heading ">
+			{
+				astraSitesVars?.zip_plans?.plan_data?.limit
+					?.ai_sites_count_daily
+			}{ ' ' }
+			AI sites
+		</span>
+	);
+
+	const aiSitesCount =
+		astraSitesVars?.zip_plans?.plan_data?.remaining?.ai_sites_count_daily;
+
+	const displayMessage = (
+		<span>
+			{ typeof aiSitesCount === 'number' && aiSitesCount <= 0 ? (
+				<>
+					<br />
+					This plan allows you to generate { dailyLimit } per day, and
+					you have reached this limit.
+					<br />
+					<br />
+					To create more AI websites, you will need to either upgrade
+					your plan or wait until the limit resets.
+				</>
+			) : (
+				<>
+					You have reached the maximum number of sites allowed to be
+					created on { planName } plan.
+					<br />
+					<br />
+					Please upgrade the plan for { teamName } in order to create
+					more sites.
+				</>
+			) }
 		</span>
 	);
 
@@ -59,12 +97,8 @@ const LimitExceedModal = ( { onOpenChange, openTarget = '_blank' } ) => {
 			<div className="space-y-8">
 				<div className="text-app-text text-base leading-6">
 					<div>
-						{ teamPlanInfo }. You have reached the maximum number of
-						sites allowed to be created on { planName } plan.
-						<br /> <br /> Please upgrade the plan for {
-							teamName
-						}{ ' ' }
-						in order to create more sites.
+						{ teamPlanInfo }
+						{ displayMessage }
 					</div>
 				</div>
 				<Button
@@ -76,7 +110,9 @@ const LimitExceedModal = ( { onOpenChange, openTarget = '_blank' } ) => {
 							...limitExceedModal,
 							open: false,
 						} );
-						if ( typeof window === 'undefined' ) return;
+						if ( typeof window === 'undefined' ) {
+							return;
+						}
 						window.open(
 							'https://app.zipwp.com/founders-deal',
 							openTarget

@@ -5,7 +5,7 @@ Tags: Elementor,Beaver Builder,Templates,Gutenberg,Block Editor,Astra Starter Si
 Requires at least: 4.4
 Requires PHP: 7.4
 Tested up to: 6.4
-Stable tag: 4.0.13
+Stable tag: 4.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,114 +13,228 @@ The growing library of 300+ ready-to-use templates that work with all WordPress 
 
 == Description ==
 
-= FREE TEMPLATES FOR ELEMENTOR, BEAVER BUILDER AND BLOCK EDITOR =
+= Starter Templates: AI Website Builder and Elementor Templates =
 
-Create professional designed pixel perfect websites in minutes with the Starter Templates plugin.
+The future of website creation is here! With Starter Templates, you can create professional-looking websites in just minutes, powered by AI.
 
-This plugin gives you access to 280+ pre-made full website templates and individual pages for your favorite page builder such as Elementor, Beaver Builder and the Block Editor.
+Leverage the Starter Templates AI website builder to generate websites with:
 
-[Try it out on a free dummy site](https://bsf.io/starter-templates-demo)
+- Stunning designs
+- All relevant sections and pages
+- High quality stock images to help engage visitors
+- Compelling website copy tailored to your business
+- Extensive customization options
 
-All you need to do is select the demo that suits your needs, import, tweak and go live!
+Say goodbye to spending days or weeks designing and building a website. With Starter Templates, you can build websites faster than ever with AI.
 
-> I love the fact that the Astra Starter Sites plugin comes with dozens of pre-built sites that were built using Elementor and that can be used to create a full website with one click. – Ben Pines, CMO at Elementor
+[Try this plugin on a demo site](https://bsf.io/starter-templates-demo)
 
-> Astra Sites allows anyone to have a beautiful website in under 5 minutes while using all open source software. The theme is free, the plugin is free, it’s almost unbelievable. You have to see it with your own eyes. – Adam Preiser, WPCrafter
+= HIGHLIGHTS =
 
-= INTRODUCING STARTER TEMPLATES 3.0! =
+★ WordPress AI website builder
+★ Built-in AI assistant
+★ Fast and easy to use
+★ Large library of Elementor templates
+★ Hundreds of WordPress block editor (Gutenberg) templates
+★ 200+ Sections and block patterns
+★ Supported page builders: Spectra, Elementor, Beaver Builder, WordPress editor
+★ Fully customizable websites
 
-The Astra Starter Sites plugin allowed you to import complete website demos, tweak them and build professional websites.
+= How Does Starter Template AI Website Builder Work? =
 
-With Starter Templates 3.0, you can now do that by importing specific pages, complete websites or even Elementor blocks that give you lots of flexibility to import only what you need.
+Starter Templates integrates with ZipWP, our amazing AI website building platform. It takes care of everything for you, from design to content generation. 
 
-= HIGHLIGHTS OF STARTER TEMPLATES 3.0 =
+Let AI do the heavy lifting, so you can focus on your ideas!
 
-- All new user interface to make it easier to select and customize the templates when you are building your website.
-- Amazing search to find the template suitable for your needs.
-- Ability to try the logo, colors and typography before importing.
-- Improved stability. We have improved our importer, which already was very stable. Now after this release, imports will rarely fail.
+Our mission is to unlock the power of the internet for small businesses. Creating a website shouldn't be difficult, and growing a business on the internet shouldn't be complicated.
 
-= FULL WEBSITE TEMPLATES FOR =
+With Starter Templates, you can create a stunning website in a matter of minutes. Simply describe your idea, and watch as a WordPress website is built before your eyes.
 
-Businesses like restaurants, lawyers, agencies, interior designers, artist shops, brandstore, pet services, charity, plumber, dental clinic, construction, fitness trainer, gardening, makeup artist and a lot more. You can take a look at all of them built with different page builders.
+Want to create a lightweight website for your business that also looks exceptional? 
 
-- [Elementor Free Website Templates](https://wpastra.com/elementor-templates-free-downloads/)
-- [Beaver Builder Free Website Templates](https://wpastra.com/ready-websites/?page-builder=beaver-builder&category=free)
-- [Block Editor Free Website Templates](https://wpastra.com/ready-websites/?page-builder=gutenberg&category=free)
+= Follow the steps below: =
 
-You can extend this library with premium ready-to-use website demos by purchasing one of the Essential or Business Toolkits.
+1. Select the type of website you're creating (portfolio, business site, landing page, or something else).
+2. Provide your business name.
+3. Describe your business. Use AI to refine your description prompt if you need to. 
+4. The AI will suggest images based on your input. Select the images you want to use.
+5. Add your contact details and social media handles so people can interact.
+6. Choose the website structure from the options. 
+7. Select any site features you need. 
+8. The AI will generate a website in under 2 minutes.
+9. Customize your site as you see fit!
 
-= WHY PEOPLE LOVE THE ASTRA THEME? =
+Whether you're a beginner with no website building experience, or a seasoned web designer, Starter Templates has you covered.
 
-Over 1+ million users are empowering their websites with Astra! From beginners to industry experts, everyone is loving Astra for its performance and ease of use.
+= All Features =
 
-= HERE ARE A FEW REASONS WHY THEY LOVE ASTRA – =
+Starter Template has all the essentials you need to create amazing websites!
 
-**Faster Performance** - Built with speed and performance in mind, Astra follows the best coding standards and lets you build faster loading and better performing websites.
+= AI Website Builder =
 
-**Easy Customization** - With all the settings managed through the customizer, Astra keeps it simple and gives you lots of options to customize everything with a few clicks.
+Thanks to the power of AI, you can create your dream website effortlessly. Our AI analyzes your business description and goals, then selects the perfect design, generates professional copy, and curates visuals to match your brand.
 
-**Pixel Perfect Design** - Astra reduces your design time by giving you pixel-perfect FREE ready-to-use websites demos within a huge library of starter sites.
+No more wrestling with complex themes or plugins – just describe your idea and let AI do the rest!
 
-**Deeper Integrations** - Astra works seamlessly with all WooCommerce plugins, LifterLMS, LearnDash etc. This means that you can create and beautify eCommerce websites and those that offer online courses in minutes.
+= Lightning Fast Websites =
 
-Fetch the website, tweak images and content and go live!
+Starter Templates prioritizes speed and efficiency without compromising quality.
 
-Use this imported site as a base for your project and don’t waste time starting from scratch!
+Here's what sets us apart:
 
-_<a href="https://wpastra.com/ready-websites/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme">See list of all available sites to import »</a>_
+= Optimized Code =
 
-**Credits**
+Pages created with Starter Templates have efficient code, and are free from all unnecessary elements. 
 
-- [History.js](https://github.com/browserstate/history.js) is distributed under the terms of the BSD  License.
-- [WP Background Process](https://github.com/A5hleyRich/wp-background-processing/) is distributed under the terms of the GNU General Public License v2.0.
-- [Widget Importer Exporter](https://github.com/churchthemes/widget-importer-exporter/) is distributed under the terms of the GNU General Public License v2.0.
-- [WordPress Importer](https://github.com/humanmade/WordPress-Importer/) is distributed under the terms of the GNU General Public License v2.0.
-- [EventSource](https://github.com/Yaffle/EventSource/) is distributed under the terms of the MIT License.
-- [Fetch](https://github.com/github/fetch/) is distributed under the terms of the MIT License.
+This translates to faster load times and a smoother user experience for visitors regardless of browser or device.
 
-== Installation ==
+= Realistic Templates =
 
-1. Upload the plugin files to the `/wp-content/plugins/astra-sites` directory, or install the plugin through the WordPress plugins screen directly.
-2. Activate the plugin through the 'Plugins' screen in WordPress.
-3. Navigate to Appearance -> Astra Sites to preview and import sites.
+Starter Templates goes beyond stunning design. It delivers readymade website templates specifically crafted with your business in mind.
+
+Launching an eCommerce store? We have a diverse selection of store templates to get you selling in no time. 
+
+Creating a business website? We have dozens of professional-quality designs ready for you to make your mark.
+
+No matter your industry or niche, we have a template that perfectly aligns with your vision.
+
+= Classic Starter Templates =
+
+Whether you're a small business owner, freelancer, or nonprofit organization, there's a template that suits your needs. Templates are carefully crafted to provide a polished and attractive look for your website. 
+
+The cherry on top? Starter Template supports multiple page builders, including Elementor, Spectra, Gutenberg, and Beaver Builder. 
+
+You have the flexibility to customize your website your way.
+
+= Hundreds of Sections and Block Patterns =
+
+Want to customize your website to make it truly unique? Use sections and block patterns to add your personal style.
+
+Available sections include: 
+
+- Hero
+- Page Header
+- About
+- Services
+- Features
+- Contact
+- Why Choose Us
+- Call To Action
+- Portfolio
+- Gallery
+- Testimonials
+- Pricing
+- FAQ
+- Team
+- Statistics
+
+= AI-Integrated Adaptive Design Library =
+
+Personalize blocks and patterns to match your website style with the power of AI. 
+
+The design library within the Starter Templates plugin is integrated with AI and royalty-free image repositories. All elements come pre-populated with relevant text and images that you can easily customize to match your brand.
+
+= Elementor Templates =
+
+A fan of Elementor? Look no further! Starter Templates offers a vast collection of professionally designed Elementor templates. 
+
+You can effortlessly import entire websites crafted with Elementor, individual pages, or even specific blocks to enhance your site's functionality and aesthetic appeal. 
+
+Then just drag, drop, customize, and launch your website!
+
+= Beaver Builder Templates =
+
+Explore the incredible library of professionally-designed Beaver Builder templates. Whether you're building a complete website or just need some inspiration, we've got you covered.
+
+You can save hours of design time compared to building your website from scratch!
+
+= WordPress Block Editor Templates =
+
+The WordPress block editor (formerly Gutenberg) is changing the game for website creation. 
+
+Building from scratch can be time-consuming. Fortunately, Starter Templates offers a vast library of readymade templates to ignite your website's potential.
+
+= AI Assistant for WordPress =
+
+Our AI Assistant works in a similar way to ChatGPT but is specifically tailored for WordPress. 
+
+With just a click of a button, you can use the power of artificial intelligence to help write copy for landing pages, proofread blog posts, translate content into different languages, generate custom HTML and CSS codes, and much more!
+
+= Royalty-Free Images =
+
+The Starter Templates plugin offers seamless integration with leading royalty-free image repositories such as Pexels and Unsplash. 
+
+You have access to millions of top-tier images within your WordPress dashboard. Simply search for the image you need and select it.
+
+= Training Videos =
+
+As the saying goes, "Give someone a fish, and they will eat for a day; teach them how to fish, and they will eat for a lifetime." 
+
+Embracing this philosophy, we offer a range of comprehensive training videos designed to complement our templates. They provide the knowledge and skills necessary to build, launch, and maintain your website.
+
+= Types of Websites You Can Create =
+
+Starter Templates is perfect for building websites for:
+
+✔ Personal branding
+✔ Restaurants
+✔ Service providers
+✔ Nonprofits and charities
+✔ Events
+✔ Startups
+✔ Local businesses
+✔ Wellness businesses
+✔ Landing pages
+✔ Lead generation websites
+✔ eCommerce stores
+✔ Blogs
+✔ Manufacturing businesses
+✔ Any other type of WordPress website
+
+There’s no limit to what you can create!
+
+Please note: To access templates and AI features, you’ll need a ZipWP account. [ZipWP platform](https://zipwp.com/). Signing up is quick, easy, and 100% free.
+
+= Fun Facts About Starter Templates =
+
+➜ Over 5,000 websites are built with Starter Templates every day.
+➜ The plugin has been installed on more than 1.6 million websites.
+➜ Starter Templates has more than 4,000 five-star reviews.
+➜ Our team of dedicated full-time WordPress experts help and support hundreds of users daily.
+➜ A devoted team full-time designers keep the design library up to date.
+➜ Our plugin offers more than 100 free Elementor templates.
+➜ You can import a complete website, individual page, or section of a page in seconds.
+➜ We support 3 page builders: Spectra, Elementor, and Beaver Builder as well as the WordPress editor
+➜ "eCommerce" is the most searched keyword in our library.
+
+= The Starter Templates Plugin Works With... =
+
+➜ Astra Theme
+➜ Spectra website builder
+➜ WordPress block editor/Gutenberg
+➜ Elementor page builder
+➜ Beaver Builder
+➜ WooCommerce
+➜ WPForms
+➜ Sitekit
 
 == Frequently Asked Questions ==
 
-= Will the Starter Templates plugin work with my theme? =
+= Why Is this awesome plugin free? =
 
-We've certainly used Astra to build all our starter templates and recommend you to do so. However, in Starter Templates 2.0 onward all the starter sites or individual page templates you import are theme independent and blend well with the theme you have.
+Free is always the best price. We offer Starter Templates for free to showcase what our team is capable of. It’s also good business.
 
-= Are all the starter templates FREE? =
+If you have a positive experience with Starter Templates, you might be tempted by the extra features included in premium versions of ZipWP, the Astra WordPress theme and other products we produce.
 
-You get over 90+ FREE ready-to-use websites as of now. There are many more premium website demos that can be accessed when you purchase one of our Agency Bundles - (i.e. either the Mini Agency or the Agency Bundles)
+We’re not afraid to prove our worth and offering a plugin for free is a great way to do that.
 
-= How can I install and import starter templates? =
+= Which theme Is used by the AI website builder? =
 
-Here is an article that will help you install and import [Starter Templates](https://wpastra.com/docs/installing-importing-astra-sites/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) on your website.
+Starter Templates, uses the Astra theme. It’s the world's most popular WordPress theme with millions of users. Since Starter Templates and Astra are developed by the same company, we can control their development plans to make the AI website builder work perfectly every time.
 
-= Can I import a website / page demo on an existing website? =
+= What kind of customizations can I make to an AI generated website? =
 
-It is recommended to install and import a website demo on a fresh WordPress installation or a blank website to avoid overriding of settings and page design.
-
-A page template can however be imported on an existing website as well.
-
-= Can I deactivate the Starter Templates plugin after importing a website? =
-
-Yes! The Starter Templates plugin acts as a medium through which you can import and install a website from our cloud server. Once you have the website at your end, you can go ahead and deactivate the plugin.
-
-= Do I need to install any other plugin before importing a website? =
-
-All you need to do is install the Starter Templates plugin and select the website demo you wish to import. While the site is being imported, you will come across a step in which the plugin asks you to click on a button that says Install plugins. This step will install and activate the necessary plugins.
-
-= Will you add more website demos? =
-
-Yes! We are working on many more free website demos built using Elementor, Beaver Builder and the Block Editor.
-
-= What if I do not find a website for the topic I am looking for? =
-
-We are open to suggestions and would love to work on topics that our users are looking out for. Please feel free to drop your suggestions through the [form here].(https://wpastra.com/sites-suggestions/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
-
+Once your website is generated, you have complete control over its content and layout. You can customize it as you would any other website, including changing colors, text, adding images, and creating new sections and pages.
 
 == Screenshots ==
 
@@ -134,6 +248,16 @@ We are open to suggestions and would love to work on topics that our users are l
 8. Free Images by Pixabay right inside the WordPress media popup.
 
 == Changelog ==
+
+v4.1.1 - 20-March-2024
+- Fix: Import process was getting stuck after activating the plugin required for selected feature.
+
+v4.1.0 - 19-March-2024
+- New: Introduced local language support in AI building.
+- New: Added an upload image feature when selecting images for your site.
+- Improvement: Enhanced AI building for a better user experience.
+- Improvement: Consolidated Logo, Font, and Color Palette support into one screen on the Classic Builder.
+- Improvement: Enhanced and optimised code for an improved user experience.
 
 v4.0.13 - 21-February-2024
 - Fix: Resolved an issue where the AI description won't get generated on WordPress.com sites.

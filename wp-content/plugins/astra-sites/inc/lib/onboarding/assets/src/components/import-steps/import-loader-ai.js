@@ -13,7 +13,9 @@ const ImportLoaderAi = ( { onClickNext } ) => {
 		useStateValue();
 
 	useEffect( () => {
-		if ( importPercent !== 100 || importError ) return;
+		if ( importPercent !== 100 || importError ) {
+			return;
+		}
 
 		const start = localStorage.getItem( 'st-import-start' );
 		const end = localStorage.getItem( 'st-import-end' );
@@ -83,7 +85,7 @@ const ImportLoaderAi = ( { onClickNext } ) => {
 			>
 				<div className={ `ist-import-progress-info-text` }>
 					<span className="import-status-string">
-					<p>{ importStatus + decodeEntities( '&nbsp;' ) }</p>
+						<p>{ importStatus + decodeEntities( '&nbsp;' ) }</p>
 					</span>
 					<div className="import-done-section">
 						{ /* <div className="tweet-import-success">

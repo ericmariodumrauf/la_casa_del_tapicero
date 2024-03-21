@@ -13,8 +13,8 @@ const TemplateInfo = ( { template, position } ) => {
 	} );
 
 	return (
-		<div className="absolute bottom-0  w-full h-14 flex items-center justify-between bg-white px-5 shadow-template-info">
-			<div className="zw-base-semibold text-app-heading capitalize">
+		<div className="absolute bottom-0  w-full h-14 flex items-center justify-between bg-white px-5 shadow-template-info border-t border-b-0 border-x-0 border-solid border-border-tertiary">
+			<div className="zw-base-semibold text-app-heading capitalize select-none">
 				{ /* { template?.name || template?.domain?.split( '.' )?.[ 0 ] } */ }
 				{ position ? `Option ${ position }` : '' }
 			</div>
@@ -77,7 +77,7 @@ const TemplateInfo = ( { template, position } ) => {
 											</div>
 										) }
 
-										{ !! template?.plugins?.length && (
+										{ /* { !! template?.plugins?.length && (
 											<div className="mt-4">
 												<div>Plugins included:</div>
 												<div className="flex flex-col gap-1 mt-1.5 font-normal">
@@ -100,7 +100,7 @@ const TemplateInfo = ( { template, position } ) => {
 													) }
 												</div>
 											</div>
-										) }
+										) } */ }
 									</div>
 								</Transition>{ ' ' }
 							</div>

@@ -1,7 +1,7 @@
+import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-export const classNames = ( ...classes ) =>
-	twMerge( classes.filter( Boolean ).join( ' ' ) );
+export const classNames = ( ...classes ) => twMerge( clsx( classes ) );
 
 /**
  * Formats a number to display in a human-readable format.
@@ -54,15 +54,15 @@ export const getColorClass = ( percentage ) => {
 };
 
 export const SITE_CREATION_STATUS_CODES = {
-	A001: 'Spinning up a server',
-	A002: 'Preparing details',
-	A003: 'Setting up options',
-	A004: 'Connecting to AI',
-	A005: 'Finding images',
-	A006: 'Writing compelling copy',
-	A007: 'Optimizing for SEO',
-	A008: 'Optimizing for mobile',
-	A009: 'Adding final touches',
+	A001: 'Downloading the images in media library...',
+	A002: 'Downloading the images in media library...',
+	A003: 'Adding interactive elements to engage visitors...',
+	A004: 'Crafting compelling copy that speaks to audience...',
+	A005: 'Optimizing website for performance and speed...',
+	A006: 'Adding essential features to engage visitors...',
+	A007: 'Optimizing SEO settings to boost online presence...',
+	A008: 'Finalizing website layout and structure...',
+	A009: 'Testing functionality across different browsers...',
 	A010: "It's taking a bit more than usual. Bear with us...",
 	A011: 'Done',
 	R001: 'Oops, Site creation hiccupped, we are trying one more time',
@@ -88,6 +88,7 @@ export const toastBody = ( { title, message } ) => {
 /**
  * Get data from local storage.
  *
+ * @param {string} key
  * @return {Object} - The value from local storage.
  */
 export const getLocalStorageItem = ( key ) => {
@@ -99,7 +100,6 @@ export const getLocalStorageItem = ( key ) => {
 		return value ? JSON.parse( value ) : null;
 	} catch ( error ) {
 		// Handle error (e.g., data is not JSON, localStorage is not available, etc.)
-		console.error( 'Error while getting localStorage item:', error );
 		return null;
 	}
 };
@@ -119,7 +119,6 @@ export const setLocalStorageItem = ( key, value ) => {
 		localStorage.setItem( key, JSON.stringify( value ) );
 	} catch ( error ) {
 		// Handle error (e.g., localStorage is full, etc.)
-		console.error( 'Error while setting localStorage:', error );
 	}
 };
 
@@ -135,6 +134,8 @@ export const removeLocalStorageItem = ( key ) => {
 };
 
 export const getPercent = ( num, den ) => {
-	if ( typeof num !== 'number' || typeof den !== 'number' ) return 0;
+	if ( typeof num !== 'number' || typeof den !== 'number' ) {
+		return 0;
+	}
 	return ( num / den ) * 100;
 };

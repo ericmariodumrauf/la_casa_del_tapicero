@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
 // import { __ } from '@wordpress/i18n';
-import { prependHTTPS } from '@wordpress/url';
 import { useStateValue } from '../../../store/store';
 import { DefaultStep } from '../../../components';
 // import SitePreview from '../../../components/site-preview';
 import { sendPostMessage } from '../utils/helpers';
 import SiteSkeleton from '../../../components/site-preview/site-skeleton';
-import { addTrailingSlash } from '../../../utils/add-trailing-slash';
-import { stripSlashes } from '../../../utils/strip-slashes';
 import { CustomizeAiSteps } from './customize-ai-steps';
 
 const CustomizeAiSite = () => {
@@ -82,11 +79,7 @@ const CustomizeAiSite = () => {
 	const [ loading, setLoading ] = useState( true );
 
 	useEffect( () => {
-		setPreviewUrl(
-			addTrailingSlash(
-				prependHTTPS( stripSlashes( window.location.origin ) )
-			)
-		);
+		setPreviewUrl( astraSitesVars.siteURL );
 	}, [] );
 
 	useEffect( () => {

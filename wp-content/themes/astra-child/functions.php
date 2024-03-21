@@ -9,6 +9,7 @@ function psw_custom_scripts_cdns() {
     ?>
 	<link rel="stylesheet" href="http://localhost/la_casa_del_tapicero/wp-content/themes/astra-child/style.min.css" type="text/css"/>
     <link rel="stylesheet" href="http://localhost/la_casa_del_tapicero/wp-content/themes/astra-child/style-contact.min.css" type="text/css"/>
+    <script src="http://localhost/la_casa_del_tapicero/wp-content/themes/astra-child/script.min.js"></script>
     <?php
 }
 add_action('wp_head', 'psw_custom_scripts_cdns');

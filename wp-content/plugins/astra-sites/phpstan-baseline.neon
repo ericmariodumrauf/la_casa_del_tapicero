@@ -637,7 +637,7 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method object\\:\\:get_filesystem\\(\\)\\.$#"
-			count: 3
+			count: 2
 			path: inc/classes/class-astra-sites-importer.php
 
 		-

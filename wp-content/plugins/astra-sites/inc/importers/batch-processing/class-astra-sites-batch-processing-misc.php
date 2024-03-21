@@ -59,6 +59,24 @@ if ( ! class_exists( 'Astra_Sites_Batch_Processing_Misc' ) ) :
 
 			Astra_Sites_Importer_Log::add( '---- Processing MISC ----' );
 			self::fix_nav_menus();
+			self::replace_images();
+		}
+
+		/**
+		 * Replace Images
+		 * 
+		 * @since 4.1.0
+		 * @return void
+		 */
+		public static function replace_images() {
+
+			if ( false === get_option( 'astra_sites_ai_import_started', false ) ) {
+				return;
+			}
+
+			if ( class_exists( 'Astra_Sites_Replace_Images' ) ) {
+				Astra_Sites_Replace_Images::get_instance()->replace_images();
+			}
 		}
 
 		/**

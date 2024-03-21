@@ -1,41 +1,37 @@
-import React, { useState } from 'react';
 import { ArrowRightIcon } from '@heroicons/react/24/outline';
-import { useSelect, withDispatch } from '@wordpress/data';
-
-import { compose } from '@wordpress/compose';
-import { FacebookIcon, LinkedInIcon, TwitterXLogo } from '../ui/icons';
-import { useStateValue } from '../../store/store';
+import { useCallback, useEffect } from 'react';
 import Button from './components/button';
-import LoadingSpinner from './components/loading-spinner';
 import Confetti from './components/Confetti';
-import { STORE_KEY } from './store';
-import Divider from './components/divider';
+import { removeLocalStorageItem } from './helpers';
+import { USER_KEYWORD } from './select-template';
+import { saveGutenbergAsDefaultBuilder } from '../../utils/functions';
 
 const BuildDone = () => {
-	const [ isLoading, setIsLoading ] = useState( false );
-	const [ , dispatch ] = useStateValue();
-
-	const { websiteInfo } = useSelect( ( select ) => {
-		const { getWebsiteInfo } = select( STORE_KEY );
-
-		return {
-			websiteInfo: getWebsiteInfo(),
-		};
-	} );
-
-	const goToCustomizationScreen = () => {
-		setIsLoading( true );
-		dispatch( {
-			type: 'set',
-			currentIndex: 2,
-			currentCustomizeIndex: 0,
-			createdSite: websiteInfo,
-		} );
+	const handleClickVisitDashboard = () => {
+		window.open( starterTemplates.adminUrl, '_self' );
 	};
 
-	const postMessage = encodeURIComponent(
-		'I just started building my website today, and it is already 70% complete — thanks to the incredible @Zip_WP AI builder. All I had to do was explain my idea, and boom, a beautiful website was generated in just seconds! 💪🚀💻 #AI #WebsiteBuilder #WordPress #Innovation'
-	);
+	const handleClickSeeWebsite = () => {
+		window.open( starterTemplates.siteUrl, '_blank' );
+	};
+
+	const removeSavedState = useCallback( () => {
+		removeLocalStorageItem( 'ai-onboarding-details' );
+		removeLocalStorageItem( 'starter-templates-onboarding' );
+		removeLocalStorageItem( 'create-site-payload' );
+		removeLocalStorageItem( USER_KEYWORD );
+	}, [] );
+
+	// Remove onboarding details from local storage.
+	useEffect( () => {
+		removeSavedState();
+		saveGutenbergAsDefaultBuilder();
+		window.addEventListener( 'beforeunload', removeSavedState );
+
+		return () => {
+			window.removeEventListener( 'beforeunload', removeSavedState );
+		};
+	}, [] );
 
 	return (
 		<div className="w-screen h-screen overflow-y-hidden">
@@ -55,72 +51,24 @@ const BuildDone = () => {
 							shine online.
 						</p>
 					</div>
-					<div className="flex items-center gap-4 flex-wrap md:flex-nowrap">
+					<div className="w-full flex flex-col justify-center items-center gap-5 flex-wrap md:flex-nowrap">
 						<Button
-							onClick={ () => {
-								goToCustomizationScreen();
-							} }
+							onClick={ handleClickSeeWebsite }
 							variant="primary"
 							size="l"
-							className="flex-1 min-w-fit min-h-[48px]"
+							className="w-full min-w-fit min-h-[48px]"
 						>
-							{ isLoading ? (
-								<LoadingSpinner />
-							) : (
-								<div className="flex items-center justify-center gap-2">
-									Start Customizations
-									<ArrowRightIcon className="w-5 h-5" />
-								</div>
-							) }
+							<span>See Your Website</span>
 						</Button>
-					</div>
-
-					<Divider className="my-8" />
-
-					<div className="flex items-center flex-col px-2 justify-center py-6 text-center text-zip-body-text text-base font-normal leading-7 bg-zip-app-highlight-bg rounded-lg">
-						<div>
-							“I just started building my website today, and it is
-							already 70% complete — thanks to the incredible
-							@Zip_WP AI builder. All I had to do was explain my
-							idea, and boom, a beautiful website was generated in
-							just seconds! 💪🚀💻
-						</div>
-						<div className="mt-2">
-							#AI #WebsiteBuilder #WordPress #Innovation”
-						</div>
-					</div>
-					<div className="mt-5 ">
-						<div className="text-zip-app-heading text-sm font-medium leading-5 flex items-center justify-center gap-4">
-							Share:
-							<div className="flex items-center justify-center gap-4">
-								<a
-									href={ `https://www.facebook.com/sharer/sharer.php?u=${ astraSitesVars.siteURL }` }
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									<FacebookIcon className="text-zip-body-text" />
-								</a>
-								<a
-									href={ `https://twitter.com/intent/tweet?text=${ postMessage }` }
-									target="_blank"
-									className="twitter-btn-wrap"
-									rel="noreferrer"
-								>
-									<TwitterXLogo />
-								</a>
-
-								<a
-									href={ `https://www.linkedin.com/sharing/share-offsite?url=${ encodeURI(
-										astraSitesVars.siteURL
-									) }` }
-									target="_blank"
-									rel="noopener noreferrer"
-									className="linkedin-btn-wrap"
-								>
-									<LinkedInIcon className="text-zip-body-text" />
-								</a>
-							</div>
-						</div>
+						<Button
+							onClick={ handleClickVisitDashboard }
+							variant="blank"
+							size="l"
+							className="w-full min-w-fit py-0 text-accent-st"
+						>
+							<span>Visit Dashboard</span>
+							<ArrowRightIcon className="w-5 h-5" />
+						</Button>
 					</div>
 				</div>
 				{ /* Confetti firework */ }
@@ -130,13 +78,4 @@ const BuildDone = () => {
 	);
 };
 
-export default compose(
-	withDispatch( ( dispatch ) => {
-		const { setNextAIStep, setPreviousAIStep } = dispatch( STORE_KEY );
-
-		return {
-			onClickNext: setNextAIStep,
-			onClickPrevious: setPreviousAIStep,
-		};
-	} )
-)( BuildDone );
+export default BuildDone;

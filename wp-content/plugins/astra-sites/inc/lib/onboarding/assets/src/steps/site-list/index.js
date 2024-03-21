@@ -115,6 +115,12 @@ const SiteList = () => {
 			currentIndex: 0,
 		} );
 	};
+
+	const backStep = () => {
+		if ( astraSitesVars.default_page_builder === 'fse' ) {
+			fseBackStep();
+		}
+	};
 	return (
 		<DefaultStep
 			content={
@@ -250,14 +256,7 @@ const SiteList = () => {
 			}
 			actions={
 				<>
-					<PreviousStepLink
-						before
-						onClick={
-							astraSitesVars.default_page_builder === 'fse'
-								? fseBackStep
-								: () => {}
-						}
-					>
+					<PreviousStepLink before onClick={ backStep }>
 						{ __( 'Back', 'astra-sites' ) }
 					</PreviousStepLink>
 

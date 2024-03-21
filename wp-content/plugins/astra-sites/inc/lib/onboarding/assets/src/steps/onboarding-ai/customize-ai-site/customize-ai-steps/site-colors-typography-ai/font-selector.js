@@ -74,6 +74,7 @@ const List = ( { className, options, onSelect, selected, type } ) => {
 								onSelect( event, id );
 							} }
 							tabIndex="0"
+							role="presentation"
 							onKeyDown={ ( event ) => {
 								handleKeyPress( event, id );
 							} }

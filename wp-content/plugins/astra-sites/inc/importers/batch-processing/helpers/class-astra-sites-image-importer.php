@@ -230,12 +230,16 @@ if ( ! class_exists( 'Astra_Sites_Image_Importer' ) ) :
 			}
 
 			$post_id = wp_insert_attachment( $post, $upload['file'] );
-			wp_update_attachment_metadata(
-				$post_id,
-				wp_generate_attachment_metadata( $post_id, $upload['file'] )
-			);
-			update_post_meta( $post_id, '_astra_sites_image_hash', $this->get_hash_image( $attachment['url'] ) );
+			try {
+				wp_update_attachment_metadata(
+					$post_id,
+					wp_generate_attachment_metadata( $post_id, $upload['file'] )
+				);
+			} catch ( Exception $e ) {
+				Astra_Sites_Importer_Log::add( 'BATCH - FAIL Exception - ' . $e->getMessage() );
+			}
 
+			update_post_meta( $post_id, '_astra_sites_image_hash', $this->get_hash_image( $attachment['url'] ) );
 			Astra_WXR_Importer::instance()->track_post( $post_id );
 
 			$new_attachment = array(

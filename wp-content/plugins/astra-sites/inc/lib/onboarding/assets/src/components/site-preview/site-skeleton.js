@@ -1,11 +1,11 @@
-import React from 'react';
 import Skeleton from '@material-ui/lab/Skeleton';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
+import { classNames } from '../../steps/onboarding-ai/helpers';
 
-const SiteSkeleton = () => {
+const SiteSkeleton = ( { className } ) => {
 	return (
-		<div className="site-loading-skeleton">
+		<div className={ classNames( 'site-loading-skeleton', className ) }>
 			<Grid container>
 				<Grid item xs={ 4 }>
 					<Box p={ '3em 8em' } display="flex">

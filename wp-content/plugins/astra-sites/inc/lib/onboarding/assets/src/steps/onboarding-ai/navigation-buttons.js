@@ -11,7 +11,9 @@ const NavigationButtons = ( {
 	onClickSkip,
 	disableContinue,
 	loading = false,
+	hideContinue = false,
 	className,
+	skipButtonText = 'Skip Step',
 } ) => {
 	const [ isLoading, setIsLoading ] = useState( false );
 
@@ -40,23 +42,25 @@ const NavigationButtons = ( {
 			) }
 		>
 			<div className="flex gap-4">
-				<Button
-					type="submit"
-					className="min-w-[9.375rem] h-[3.125rem]"
-					onClick={ handleOnClickContinue }
-					variant="primary"
-					hasSuffixIcon={ ! isLoading }
-					disabled={ disableContinue }
-				>
-					{ isLoading || loading ? (
-						<LoadingSpinner />
-					) : (
-						<>
-							<span>{ continueButtonText }</span>
-							<ArrowRightIcon className="w-5 h-5" />
-						</>
-					) }
-				</Button>
+				{ ! hideContinue && (
+					<Button
+						type="submit"
+						className="min-w-[9.375rem] h-[3.125rem]"
+						onClick={ handleOnClickContinue }
+						variant="primary"
+						hasSuffixIcon={ ! isLoading }
+						disabled={ disableContinue }
+					>
+						{ isLoading || loading ? (
+							<LoadingSpinner />
+						) : (
+							<>
+								<span>{ continueButtonText }</span>
+								<ArrowRightIcon className="w-5 h-5" />
+							</>
+						) }
+					</Button>
+				) }
 				{ typeof onClickPrevious === 'function' && (
 					<Button
 						type="button"
@@ -75,7 +79,7 @@ const NavigationButtons = ( {
 					onClick={ handleOnClickSkip }
 					variant="blank"
 				>
-					Skip Step
+					<span>{ skipButtonText }</span>
 				</Button>
 			) }
 		</div>
