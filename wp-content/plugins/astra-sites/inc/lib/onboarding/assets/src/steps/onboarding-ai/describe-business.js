@@ -18,7 +18,8 @@ import Divider from './components/divider';
 import { STORE_KEY } from './store';
 import { adjustTextAreaHeight } from './utils/helpers';
 import { classNames } from './helpers';
-import StyledText from './components/styled-text';
+import StyledText from './components/StyledText';
+import { __ } from '@wordpress/i18n';
 
 const DescribeBusiness = ( { onClickContinue, onClickPrevious } ) => {
 	const {
@@ -35,8 +36,6 @@ const DescribeBusiness = ( { onClickContinue, onClickPrevious } ) => {
 		const { getOnboardingAI } = select( STORE_KEY );
 		return getOnboardingAI();
 	} );
-
-	console.log( { descriptionListStore } );
 
 	const {
 		setWebsiteDetailsAIStep,
@@ -76,8 +75,6 @@ const DescribeBusiness = ( { onClickContinue, onClickPrevious } ) => {
 		}
 		setIsLoading( true );
 
-		console.log( { formBusinessDetails } );
-
 		const newDescList = [ formBusinessDetails ];
 
 		try {
@@ -90,7 +87,7 @@ const DescribeBusiness = ( { onClickContinue, onClickPrevious } ) => {
 				data: {
 					business_name: businessName,
 					business_description: formBusinessDetails,
-					category: businessType.slug,
+					category: businessType,
 				},
 			} );
 			if ( response.success ) {
@@ -135,7 +132,7 @@ const DescribeBusiness = ( { onClickContinue, onClickPrevious } ) => {
 				data: {
 					business_name: businessName,
 					business_description: details,
-					category: businessType.slug,
+					category: businessType,
 				},
 			} );
 			if ( response.success ) {
@@ -148,7 +145,6 @@ const DescribeBusiness = ( { onClickContinue, onClickPrevious } ) => {
 			}
 		} catch ( error ) {
 			// DO Nothing.
-			console.error( error );
 		} finally {
 			setIsFetchingKeywords( false );
 		}
@@ -174,7 +170,7 @@ const DescribeBusiness = ( { onClickContinue, onClickPrevious } ) => {
 			description:
 				'Please be as descriptive as you can. Share details such as services, products, goals, etc.',
 		},
-		person: {
+		'personal-website': {
 			question: getTitle`Who is ${ 'name' }? Tell us more about the person.`,
 			description:
 				'Please be as descriptive as you can. Share details such as what they do, their expertise, offerings, etc.',
@@ -210,14 +206,17 @@ const DescribeBusiness = ( { onClickContinue, onClickPrevious } ) => {
 				'Please be as descriptive as you can. Share details such as treatments, procedures, facilities, etc.',
 		},
 		unknown: {
-			question: getTitle`What is ${ 'name' }? Please describe the website in a few words.`,
+			question: getTitle`Please describe ${ 'name' } in a few words.`,
 		},
 	};
 
 	const getDescription = ( type ) => {
 		return (
 			CATEGORY_DATA[ type ]?.description ??
-			'Please be as descriptive as you can. Share details such services, products, goal, etc.'
+			__(
+				'The best way to describe anything is by answering a few WH questions. Who, What, Where, Why, When, etc.',
+				'astra-sites'
+			)
 		);
 	};
 
@@ -234,10 +233,6 @@ const DescribeBusiness = ( { onClickContinue, onClickPrevious } ) => {
 
 	const { list: descriptionList, currentPage: descriptionPage } =
 		descriptionListStore || {};
-
-	useEffect( () => {
-		console.log( { descriptionList }, descriptionList.length );
-	}, [ descriptionListStore ] );
 
 	const navigateDescription = ( showNext ) => {
 		const newPageNumber = showNext
@@ -280,9 +275,9 @@ const DescribeBusiness = ( { onClickContinue, onClickPrevious } ) => {
 	};
 
 	const addDescriptionToList = ( descList ) => {
-		if ( ! Array.isArray( descList ) ) return;
-
-		console.log( { descList } );
+		if ( ! Array.isArray( descList ) ) {
+			return;
+		}
 
 		const filteredList = descList.filter(
 			( desc ) =>
@@ -305,8 +300,6 @@ const DescribeBusiness = ( { onClickContinue, onClickPrevious } ) => {
 			},
 		} );
 
-		console.log( { descList } );
-
 		// dispatch( {
 		// 	type: 'set',
 		// 	createWebsiteFormData: {
@@ -321,7 +314,9 @@ const DescribeBusiness = ( { onClickContinue, onClickPrevious } ) => {
 	};
 
 	const setBusinessDesc = ( descriptionValue, isOnSubmit ) => {
-		if ( descriptionValue?.trim() === businessDetails?.trim() ) return;
+		if ( descriptionValue?.trim() === businessDetails?.trim() ) {
+			return;
+		}
 
 		setOnboardingAIDetails( {
 			...aiOnboardingDetails,
@@ -370,11 +365,11 @@ const DescribeBusiness = ( { onClickContinue, onClickPrevious } ) => {
 		>
 			<Heading
 				heading={
-					CATEGORY_DATA[ businessType?.slug ]?.question ??
+					CATEGORY_DATA[ businessType ]?.question ??
 					CATEGORY_DATA.unknown.question
 				}
 				subHeading={ getDescription(
-					businessType?.slug?.toLowerCase()
+					businessType?.replaceAll( ' ', '-' )?.toLowerCase()
 				) }
 			/>
 			<div>
@@ -382,7 +377,10 @@ const DescribeBusiness = ( { onClickContinue, onClickPrevious } ) => {
 					ref={ textareaRef }
 					rows={ 8 }
 					className="w-full"
-					placeholder="E.g. I am a Yoga Teacher from London who’s passionate about guiding students towards inner peace, strength, and mindfulness. I offer personalized classes that nurture the mind, body, and soul."
+					placeholder={ __(
+						'E.g. Mantra Minds is a yoga studio located in Chino Hills, California. The studio offers a variety of classes such as Hatha yoga, Vinyasa flow, and Restorative yoga. The studio is led by Jane, an experienced and certified yoga instructor with over 10 years of teaching expertise. The welcoming atmosphere and personalized Jane make it a favorite among yoga enthusiasts in the area.',
+						'astra-sites'
+					) }
 					name="businessDetails"
 					register={ register }
 					validations={ {

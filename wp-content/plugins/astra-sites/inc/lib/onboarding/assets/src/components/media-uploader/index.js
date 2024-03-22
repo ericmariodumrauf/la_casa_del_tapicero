@@ -187,7 +187,7 @@ const MediaUploader = () => {
 					) }
 					<div className="astra-sites-ai-logo-wrap">
 						<div className="label">
-							{ __( 'Logo Width', 'astra-sitess' ) }
+							{ __( 'Logo Width', 'astra-sites' ) }
 						</div>
 						<div
 							className={ `control-reset ${

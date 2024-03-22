@@ -1,9 +1,9 @@
 import toast from 'react-hot-toast';
 import { twMerge } from 'tailwind-merge';
+import clsx from 'clsx';
 import { toastBody } from '../helpers';
 
-export const classNames = ( ...classes ) =>
-	twMerge( classes.filter( Boolean ).join( ' ' ) );
+export const classNames = ( ...classes ) => twMerge( clsx( classes ) );
 
 export const debounce = ( func, wait, immediate ) => {
 	let timeout;
@@ -311,7 +311,9 @@ export const adjustTextAreaHeight = ( node, maxHeight = 400 ) => {
  * @return {Object} - A new object with camelCase keys.
  */
 export const objSnakeToCamelCase = ( obj ) => {
-	if ( ! obj ) return {};
+	if ( ! obj ) {
+		return {};
+	}
 
 	const newObj = {};
 	for ( const [ key, value ] of Object.entries( obj ) ) {
@@ -406,4 +408,22 @@ export const handleCopyToClipboard = ( event, text ) => {
 			message: 'Copied to clipboard',
 		} )
 	);
+};
+
+export const limitExceeded = () => {
+	const zipPlans = astraSitesVars?.zip_plans;
+	const sitesRemaining = zipPlans?.plan_data?.remaining;
+	const aiSitesRemainingCount = sitesRemaining?.ai_sites_count;
+	const allSitesRemainingCount = sitesRemaining?.all_sites_count;
+
+	if (
+		( typeof aiSitesRemainingCount === 'number' &&
+			aiSitesRemainingCount <= 0 ) ||
+		( typeof allSitesRemainingCount === 'number' &&
+			allSitesRemainingCount <= 0 )
+	) {
+		return true;
+	}
+
+	return false;
 };

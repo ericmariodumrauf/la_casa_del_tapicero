@@ -73,7 +73,11 @@ if ( ! class_exists( 'Astra_Sites_Batch_Processing_Images' ) ) :
 			foreach ( $window as $attachment_id ) {
 				$file = get_attached_file( $attachment_id );
 				if ( false !== $file ) {
-					wp_generate_attachment_metadata( $attachment_id, $file );
+					try {
+						wp_generate_attachment_metadata( $attachment_id, $file );
+					} catch ( Exception $e ) {
+						Astra_Sites_Importer_Log::add( 'Error: ' . $e->getMessage() );
+					}
 				}
 			}
 			Astra_Sites_Importer_Log::add( '---- Processing Images Metadata Completed ----' );

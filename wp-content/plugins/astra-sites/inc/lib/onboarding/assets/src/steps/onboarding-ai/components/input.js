@@ -48,7 +48,7 @@ const Input = (
 			) }
 			<div className="flex relative items-center">
 				{ prefixIcon && (
-					<div className={ `mr-3 h-${ height } flex items-center` }>
+					<div className="absolute left-4 flex items-center">
 						{ prefixIcon }
 					</div>
 				) }
@@ -81,7 +81,7 @@ const Input = (
 						name={ name }
 						disabled={ disabled }
 						className={ classNames(
-							'w-full px-[1rem] placeholder:text-secondary-text rounded-md outline-none text-[0.9rem]',
+							'w-full px-[1rem] placeholder:text-secondary-text rounded-md outline-none text-[0.9rem] placeholder:!text-base',
 							`h-${ height }`,
 							label ? 'mt-2' : '',
 							noBorder

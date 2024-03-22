@@ -855,11 +855,13 @@ class Plugin {
 
 		if ( ! file_exists( $common_style_url ) ) {
 			$this->regenerate_spectra_css();
+			$common_css_content = file_exists( $common_style_url ) ? file_get_contents( $common_style_url ) : '';
 		}
 
-		$common_css_content = file_exists( $common_style_url ) ? file_get_contents( $common_style_url ) : '';
+		if ( empty( $common_css_content ) ) {
+			$common_css_content = Sync_Library::instance()->get_server_spectra_common_css();
+		}
 
-		$blocks = $this->get_all_blocks();
 		$ast_header = '';
 		$ast_footer = '';
 		$static_css_path = '';
@@ -926,7 +928,7 @@ class Plugin {
 					'wpforms_status'          => $this->get_plugin_status( 'spectra-pro/spectra-pro.php' ),
 					'astra_sites_status'          => $this->get_plugin_status( 'astra-sites/astra-sites.php' ),
 					'_ajax_nonce'             => wp_create_nonce( 'ast-block-templates-ajax-nonce' ),
-					'button_text'             => esc_html__( 'Template Kits', 'ast-block-templates' ),
+					'button_text'             => esc_html__( 'Design Library', 'ast-block-templates' ),
 					'display_button_logo'     => true,
 					'popup_logo_uri'          => AST_BLOCK_TEMPLATES_URI . 'dist/spectra-logo.svg',
 					'button_logo'             => AST_BLOCK_TEMPLATES_URI . 'dist/spectra.svg',
@@ -992,6 +994,7 @@ class Plugin {
 					'ai_design_copilot' => isset( $ai_features['ai_design_copilot']['status'] ) ? $ai_features['ai_design_copilot']['status'] : 'disabled',
 					'ai_assistant' => isset( $ai_features['ai_assistant']['status'] ) ? $ai_features['ai_assistant']['status'] : 'disabled',
 					'hide_notice' => $this->is_show_personalize_ai_notice(),
+					'bypassAuth' => apply_filters( 'ast_block_templates_bypass_auth', false ),
 				)
 			)
 		);

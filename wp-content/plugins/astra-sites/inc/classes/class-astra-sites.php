@@ -1240,9 +1240,13 @@ if ( ! class_exists( 'Astra_Sites' ) ) :
 		 * @param String $url URL to pixabay image.
 		 * @param String $name Name to pixabay image.
 		 * @param String $photo_id Photo ID to pixabay image.
+		 * @param String $description Description to pixabay image.
 		 * @see http://codex.wordpress.org/Function_Reference/wp_insert_attachment#Example
 		 */
-		public function create_image_from_url( $url, $name, $photo_id ) {
+		public function create_image_from_url( $url, $name, $photo_id, $description = '' ) {
+			require_once ABSPATH . 'wp-admin/includes/media.php';
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			require_once ABSPATH . 'wp-admin/includes/image.php';
 			$file_array         = array();
 			$file_array['name'] = wp_basename( $name );
 
@@ -1263,12 +1267,14 @@ if ( ! class_exists( 'Astra_Sites' ) ) :
 				return $id;
 			}
 
+			$alt = ( '' === $description ) ? $name : $description;
+
 			// Store the original attachment source in meta.
 			add_post_meta( $id, '_source_url', $url );
 
 			update_post_meta( $id, 'astra-images', $photo_id );
-			update_post_meta( $id, '_wp_attachment_image_alt', $name );
-
+			update_post_meta( $id, '_wp_attachment_image_alt', $alt );
+			update_post_meta( $id, '_astra_sites_imported_post', true );
 			return $id;
 		}
 
@@ -1681,7 +1687,7 @@ if ( ! class_exists( 'Astra_Sites' ) ) :
 			$url = add_query_arg( $arguments, admin_url( 'themes.php' ) );
 
 			$action_links = array(
-				'settings' => '<a href="' . esc_url( $url ) . '" aria-label="' . esc_attr__( 'See Library', 'astra-sites' ) . '">' . esc_html__( 'See Library', 'astra-sites' ) . '</a>',
+				'settings' => '<a href="' . esc_url( $url ) . '" aria-label="' . esc_attr__( 'Get Started', 'astra-sites' ) . '">' . esc_html__( 'Get Started', 'astra-sites' ) . '</a>',
 			);
 
 			return array_merge( $action_links, $links );
@@ -1960,9 +1966,24 @@ if ( ! class_exists( 'Astra_Sites' ) ) :
 				$spectra_theme = 'installed-and-active';
 			}
 			$enable_block_builder = apply_filters( 'st_enable_block_page_builder', false );
-			$default_page_builder = ( 'installed-and-active' === $spectra_theme ) ? 'fse' : Astra_Sites_Page::get_instance()->get_setting( 'page_builder' );
+			$saved_page_builder = Astra_Sites_Page::get_instance()->get_setting( 'page_builder' );
+			if ( 'beaver-builder' === $saved_page_builder && get_option( 'st-beaver-builder-flag' ) === '1' ) {
+				$saved_page_builder = 'gutenberg';
+			}
+			if ( 'elementor' === $saved_page_builder && get_option( 'st-elementor-builder-flag' ) === '1' ) {
+				$saved_page_builder = 'gutenberg';
+			}
+			$default_page_builder = ( 'installed-and-active' === $spectra_theme ) ? 'fse' : $saved_page_builder;
 			$default_page_builder = ( $enable_block_builder && empty( $default_page_builder ) ) ? 'gutenberg' : $default_page_builder;
+			
+			$remove_parameters = array( 'credit_token', 'token', 'email', 'ast_action', 'nonce' );
+			$credit_request_params = array(
+				'success_url' => isset( $_SERVER['REQUEST_URI'] ) ? urlencode( $this->remove_query_params( network_home_url() . $_SERVER['REQUEST_URI'], $remove_parameters ) . '&ast_action=credits' ) : '', // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			);
 
+			$credit_purchase_url = defined( 'ZIP_AI_CREDIT_TOPUP_URL' ) ? ZIP_AI_CREDIT_TOPUP_URL : 'https://app.zipwp.com/credits-pricing';
+			$credit_purchase_url = add_query_arg( $credit_request_params, $credit_purchase_url );
+			
 			if ( is_callable( '\SureCart\Models\ApiToken::get()' ) ) {
 				$surecart_store_exist = \SureCart\Models\ApiToken::get();
 			}
@@ -2070,6 +2091,8 @@ if ( ! class_exists( 'Astra_Sites' ) ) :
 					'zip_token_exists' => Astra_Sites_ZipWP_Helper::get_token() !== '' ? true : false,
 					'zip_plans' => ( $plans && isset( $plans['data'] ) ) ? $plans['data'] : array(),
 					'dashboard_url' => admin_url(),
+					'placeholder_images' => Astra_Sites_ZipWP_Helper::get_image_placeholders(),
+					'get_more_credits_url' => $credit_purchase_url,
 				)
 			);
 
@@ -3180,6 +3203,43 @@ if ( ! class_exists( 'Astra_Sites' ) ) :
 				// Display a notice on the dashboard.
 				echo '<div class="error"><p>' . esc_html__( 'Required WP_Filesystem Permissions to import the templates from Starter Templates are missing.', 'astra-sites' ) . '</p></div>';
 			}
+		}
+
+		/**
+		 * Remove query parameters from the URL.
+		 * 
+		 * @param  String   $url URL.
+		 * @param  String[] $params Query parameters.
+		 *
+		 * @return string       URL.
+		 */
+		public function remove_query_params( $url, $params ) {
+			$parts = wp_parse_url( $url );
+			$query = array();
+
+			if ( isset( $parts['query'] ) ) {
+				parse_str( $parts['query'], $query );
+			}
+
+			foreach ( $params as $param ) {
+				unset( $query[ $param ] );
+			}
+
+			$query = http_build_query( $query );
+
+			if ( ! empty( $query ) ) {
+				$query = '?' . $query;
+			}
+
+			if ( ! isset( $parts['host'] ) ) {
+				return $url;
+			}
+
+			$parts['scheme'] = isset( $parts['scheme'] ) ? $parts['scheme'] : 'https';
+			$parts['path']   = isset( $parts['path'] ) ? $parts['path'] : '/';
+			$parts['port']   = isset( $parts['port'] ) ? ':' . $parts['port'] : '';
+
+			return $parts['scheme'] . '://' . $parts['host'] . $parts['port'] . $parts['path'] . $query;
 		}
 	}
 

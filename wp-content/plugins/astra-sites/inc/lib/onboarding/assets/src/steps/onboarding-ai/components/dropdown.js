@@ -10,6 +10,7 @@ const Dropdown = ( {
 	offset = [ 0, 0 ],
 	children,
 	disabled = false,
+	mainClassName = '',
 } ) => {
 	let placementValue = 'bottom-end';
 	switch ( placement ) {
@@ -49,7 +50,7 @@ const Dropdown = ( {
 	}
 
 	return (
-		<Menu as="div" className="relative">
+		<Menu as="div" className={ `relative ${ mainClassName }` }>
 			{ ( { open } ) => (
 				<>
 					<Menu.Button

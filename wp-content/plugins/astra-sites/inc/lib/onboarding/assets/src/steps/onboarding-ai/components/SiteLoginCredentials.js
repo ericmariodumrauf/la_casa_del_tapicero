@@ -41,7 +41,9 @@ const SiteLoginCredentials = ( {
 		const copyTextNode =
 			event.target.closest( 'div#zw-copy-info' ).firstChild;
 
-		if ( ! copyTextNode ) return;
+		if ( ! copyTextNode ) {
+			return;
+		}
 
 		copyTextNode.innerText = 'Copied!';
 		setTimeout( () => {

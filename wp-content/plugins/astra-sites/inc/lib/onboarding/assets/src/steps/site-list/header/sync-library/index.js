@@ -10,13 +10,31 @@ import { isSyncSuccess, SyncStart } from './utils';
 import './style.scss';
 
 const SyncLibrary = () => {
-	const [ {}, dispatch ] = useStateValue();
+	const [ { currentIndex }, dispatch ] = useStateValue();
+
 	const [ syncState, setSyncState ] = useState( {
 		isLoading: false,
 		updatedData: null,
 		syncStatus: null,
 	} );
+
 	const { isLoading, updatedData, syncStatus } = syncState;
+
+	useEffect( () => {
+		if ( isLoading ) {
+			window.onbeforeunload = () => {
+				return true;
+			};
+
+			return () => {
+				window.onbeforeunload = null;
+			};
+		}
+	}, [ isLoading ] );
+
+	if ( 0 === currentIndex ) {
+		return null;
+	}
 
 	if ( syncStatus === true && !! updatedData ) {
 		const { sites, categories, categoriesAndTags } = updatedData;
@@ -50,18 +68,6 @@ const SyncLibrary = () => {
 			syncStatus: isSyncSuccess(),
 		} );
 	};
-
-	useEffect( () => {
-		if ( isLoading ) {
-			window.onbeforeunload = () => {
-				return true;
-			};
-
-			return () => {
-				window.onbeforeunload = null;
-			};
-		}
-	}, [ isLoading ] );
 
 	return (
 		<>

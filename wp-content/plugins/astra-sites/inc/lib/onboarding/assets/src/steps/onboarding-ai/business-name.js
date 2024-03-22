@@ -14,8 +14,8 @@ const BusinessName = ( { onClickContinue, onClickPrevious } ) => {
 		return getAIStepData();
 	} );
 	const { setWebsiteNameAIStep } = useDispatch( STORE_KEY );
-	const websiteType = businessType.slug;
-	const websiteTypeName = businessType.name.toLowerCase();
+	const websiteType = businessType;
+	const websiteTypeName = businessType.toLowerCase();
 
 	const {
 		register,
@@ -34,9 +34,10 @@ const BusinessName = ( { onClickContinue, onClickPrevious } ) => {
 		let title = websiteTypeName;
 		let pronoun = 'your ';
 		const suffix = '?';
-
-		switch ( websiteType?.toLowerCase() ) {
-			case 'person':
+		switch ( websiteType?.replaceAll( ' ', '-' )?.toLowerCase?.() ) {
+			case 'personal-website':
+			case 'other':
+			case 'others':
 				title = 'website';
 				break;
 			case 'organisation':
@@ -50,6 +51,7 @@ const BusinessName = ( { onClickContinue, onClickPrevious } ) => {
 				title += ' firm';
 				break;
 			default:
+				pronoun = 'this ';
 				break;
 		}
 
@@ -57,11 +59,11 @@ const BusinessName = ( { onClickContinue, onClickPrevious } ) => {
 	};
 
 	const getSubHeading = () => {
-		const prefix = 'Kindly provide details about';
+		let prefix = 'Kindly provide details about';
 		let pronoun = 'this';
 		let suffix = websiteTypeName;
 
-		switch ( websiteType?.toLowerCase() ) {
+		switch ( websiteType?.replaceAll( ' ', '-' )?.toLowerCase?.() ) {
 			case 'business':
 				pronoun = 'your';
 				break;
@@ -73,7 +75,13 @@ const BusinessName = ( { onClickContinue, onClickPrevious } ) => {
 				pronoun = 'yourself';
 				suffix = '';
 				break;
+			case 'other':
+				suffix = 'website';
+				break;
 			default:
+				prefix = 'Kindly provide details';
+				pronoun = 'regarding ';
+				suffix = ' yourself, your business, or your organization.';
 				break;
 		}
 
