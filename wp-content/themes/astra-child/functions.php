@@ -1,15 +1,6 @@
 <?php
 function mychildtheme_enqueue_styles() {
-    wp_enqueue_style('child-style', get_template_directory_uri() . '/style.css');
-    wp_enqueue_style('child-style', get_stylesheet_directory_uri() . '/style.min.css', array('child-style'), wp_get_theme()->get('Version'));
+    wp_enqueue_style('parent-style', get_template_directory_uri() . '/style.css');
+    wp_enqueue_style('child-style-min', get_stylesheet_directory_uri() . '/style.min.css', array('parent-style'), wp_get_theme()->get('Version'));
 }
 add_action('wp_enqueue_scripts', 'mychildtheme_enqueue_styles');
-
-function psw_custom_scripts_cdns() {
-    ?>
-	<link rel="stylesheet" href="http://localhost/la_casa_del_tapicero/wp-content/themes/astra-child/style.min.css" type="text/css"/>
-    <link rel="stylesheet" href="http://localhost/la_casa_del_tapicero/wp-content/themes/astra-child/style-contact.min.css" type="text/css"/>
-    <script src="http://localhost/la_casa_del_tapicero/wp-content/themes/astra-child/script.min.js"></script>
-    <?php
-}
-add_action('wp_head', 'psw_custom_scripts_cdns');
