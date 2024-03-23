@@ -5,3 +5,152 @@ Template: astra
 Version: 1.0.0 
 License: GNU General Public License v2 or later 
 License URI: http://www.gnu.org/licenses/gpl-2.0.html Text Domain: astra-child */
+
+#masthead {
+    position: fixed;
+    width: 100%;
+}
+.ast-theme-transparent-header #masthead {
+    position: fixed;
+    transition: 0.3s;
+}
+.ast-logo-title-inline .site-logo-img {
+    padding-right: 0 !important;
+}
+@media (max-width: 543px) {
+    .ast-theme-transparent-header #masthead .site-logo-img .transparent-custom-logo img {
+        max-width: 65px !important;
+    }
+}
+@media (min-width: 544px) and (max-width: 921px) {
+    .ast-theme-transparent-header #masthead .site-logo-img .transparent-custom-logo img {
+        max-width: 75px !important;
+    }
+}
+.ast-woocommerce-container {
+    margin-top: 6rem;
+}
+.ast-woo-product-no-review {
+    padding: 2rem 5rem !important;
+}
+#whatsapp-icon,
+.site-below-footer-wrap,
+li.product {
+    padding: 0 !important;
+}
+#secondary {
+    margin: 8em 0 2.5em !important;
+}
+@media (max-width: 767px) {
+    div > .ast-article-single.ast-woo-product-no-review {
+        padding: 1rem 1.5rem !important;
+    }
+    #whatsapp-icon {
+        bottom: 3px !important;
+    }
+}
+#whatsapp-icon {
+    background: 0 0 !important;
+    border: none !important;
+    position: fixed;
+    bottom: 15px;
+    right: 40px;
+    z-index: 9;
+    cursor: pointer;
+    -webkit-transition: 0.3s ease-out;
+    -o-transition: 0.3s ease-out;
+    transition: 0.3s ease-out;
+}
+@media screen and (max-width: 1024px) {
+    #whatsapp-icon {
+        right: 30px;
+    }
+}
+@media screen and (max-width: 768px) {
+    #whatsapp-icon {
+        right: 18px;
+    }
+}
+@media screen and (max-width: 425px) {
+    #whatsapp-icon {
+        right: 16px;
+    }
+}
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted #000;
+}
+.tooltip .tooltip-text {
+    text-decoration: none;
+    visibility: hidden;
+    width: inherit;
+    background-color: #000;
+    color: #fff;
+    text-align: center;
+    padding: 4px;
+    border-radius: 6px;
+    opacity: 0;
+    transition: opacity 0.5s;
+    line-height: normal;
+    text-wrap: nowrap;
+    position: absolute;
+    z-index: 1;
+    top: -5px;
+    right: 105%;
+}
+.tooltip .tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent transparent #000;
+}
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+.woocommerce ul.products li.product.desktop-align-left,
+.woocommerce-page ul.products li.product.desktop-align-left {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    max-width: 300px;
+    padding: 10px !important;
+    overflow: hidden;
+}
+.wc-layered-nav-rating a,
+.widget_layered_nav_filters ul li.chosen a,
+.woocommerce div.product p.price,
+.woocommerce div.product span.price,
+.woocommerce ul.products li.product .price,
+.woocommerce-page ul.products li.product .ast-woo-product-category {
+    border: none;
+    outline: 0;
+    padding: 12px;
+    color: #fff;
+    background-color: #0274be;
+    text-align: center;
+    cursor: pointer;
+    width: 100%;
+    font-size: 18px;
+}
+.wc-layered-nav-rating a:hover,
+.widget_layered_nav_filters ul li.chosen a,
+.woocommerce div.product p.price,
+.woocommerce div.product span.price,
+.woocommerce ul.products li.product .price,
+.woocommerce-page ul.products li.product .ast-woo-product-category {
+    opacity: 0.7;
+}
+.woocommerce-js ul.products li.product a img, .woocommerce-page ul.products li.product a img {
+    transition: all 300ms ease-in 0s;
+}
+.woocommerce-js ul.products li.product a img:hover {
+    -webkit-transform: scale3d(1.05, 1.05, 1.05);
+            transform: scale3d(1.05, 1.05, 1.05);
+}
+.wp-block-uagb-container.uagb-block-f517ed11 {
+    background: var(--ast-global-color-7);
+}
