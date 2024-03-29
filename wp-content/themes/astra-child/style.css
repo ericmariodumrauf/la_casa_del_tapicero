@@ -118,17 +118,11 @@ li.product {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     max-width: 300px;
     padding: 10px !important;
-    overflow: hidden; /* este */
 }
 .astra-shop-thumbnail-wrap {
     overflow: hidden; /* o este */
 }
-.wc-layered-nav-rating a,
-.widget_layered_nav_filters ul li.chosen a,
-.woocommerce div.product p.price,
-.woocommerce div.product span.price,
-.woocommerce ul.products li.product .price,
-.woocommerce-page ul.products li.product .ast-woo-product-category {
+.woocommerce ul.products li.product .price {
     border: none;
     outline: 0;
     padding: 12px;
@@ -155,19 +149,114 @@ li.product {
     -webkit-transform: scale3d(1.05, 1.05, 1.05);
             transform: scale3d(1.05, 1.05, 1.05);
 }
-/* .wp-block-uagb-container.uagb-block-f517ed11 {
-    background: var(--ast-global-color-7);
-} */
 @media (max-width: 544px) {
     .ast-container .woocommerce ul.products:not(.elementor-grid) {
         grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
     }
 }
 .whatsapp-link-consulta {
-    color: #fff; /* Color verde de WhatsApp */
-    text-decoration: none; /* Elimina el subrayado */
-    /* Agrega más estilos según necesites */
+    color: #fff;
+    text-decoration: none;
 }
 .whatsapp-link-consulta:hover {
     color: #333;
+}
+#woocommerce_price_filter-1 {
+    display: none;
+}
+.container {
+    width: 100%;
+    padding-right: 25px;
+    padding-left: 25px;
+    margin-right: auto;
+    margin-left: auto;
+}
+.banner_only_image {
+    display: flex;
+    margin-left: -15px;
+    margin-right: -15px;
+}
+.banner_only_image .banner {
+    margin-top: 10px;
+    padding: 0 10px;
+    overflow: hidden;
+}
+.banner_only_image .banner.co11 {
+    flex-basis: 60.1%;
+}
+.banner_only_image .banner.co12 {
+    flex-basis: 39.9%;
+}
+.banner_only_image .banner.co13 {
+    flex-basis: 32.8%;
+}
+.banner_only_image .banner.co14 {
+    flex-basis: 71.8%;
+}
+.wp-block-uagb-container.uagb-block-d478dfff {
+    padding-top: 20px;
+}
+.banner_only_image .banner a img {
+    width: 100%;
+    height: auto;
+}
+.banner_only_image .banner a {
+    display: inline-block; 
+    position: relative;
+    line-height: 0; 
+}
+.banner_only_image .banner a::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--ast-global-color-7);
+    opacity: 0.5;
+    pointer-events: none;
+}
+.banner a {
+    display: block;
+    position: relative;
+}
+.banner a img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+.banner-text {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    width: 95%;
+    max-width: 99%;
+}
+.banner-text h3, .banner-text p {
+    margin: 0 !important;
+    color: #fff;
+}
+.sub-text {
+    font-size: .85em;
+    margin-bottom: .5em;
+    display: block;
+    line-height: 1.3;
+    opacity: .6;
+}
+.wp-block-uagb-container.uagb-block-f517ed11.alignfull.uagb-is-root-container {
+    padding-top: 0;
+}
+.banner_only_image a{
+    overflow: hidden;
+}
+.banner img {
+    transition: all 300ms ease-in 0s;
+}
+.banner img:hover {
+    -webkit-transform: scale3d(1.05, 1.05, 1.05);
+            transform: scale3d(1.05, 1.05, 1.05);
 }

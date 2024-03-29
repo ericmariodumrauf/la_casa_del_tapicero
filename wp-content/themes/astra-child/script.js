@@ -1,24 +1,22 @@
-// document.addEventListener('DOMContentLoaded', (event) => {
-//     const elements = document.querySelectorAll('.wc-layered-nav-rating a, .widget_layered_nav_filters ul li.chosen a, .woocommerce div.product p.price, .woocommerce div.product span.price, .woocommerce ul.products li.product .price, .woocommerce-page ul.products li.product .ast-woo-product-category');
-//     elements.forEach(function(element) {
-//         element.innerHTML = 'Consultar';
-//     });
-// });
 document.addEventListener('DOMContentLoaded', (event) => {
-    const elements = document.querySelectorAll('.wc-layered-nav-rating a, .widget_layered_nav_filters ul li.chosen a, .woocommerce div.product p.price, .woocommerce div.product span.price, .woocommerce ul.products li.product .price, .woocommerce-page ul.products li.product .ast-woo-product-category');
+    const elements = document.querySelectorAll('.price');
     elements.forEach(function(element) {
-        const phoneNumber = "YOUR_PHONE_NUMBER_HERE"; // Asegúrate de reemplazar esto con tu número
-        const whatsappLink = document.createElement('a');
-        whatsappLink.innerText = 'Consultar';
-        whatsappLink.href = `https://wa.me/${phoneNumber}`;
-        whatsappLink.target = '_blank';
-        // Agrega una clase al enlace
-        whatsappLink.classList.add('whatsapp-link-consulta');
-        // Limpia el contenido actual y añade el enlace de WhatsApp
-        while (element.firstChild) {
-            element.removeChild(element.firstChild);
+        // Verifica si el elemento ya tiene un enlace de WhatsApp
+        const existingLink = element.querySelector('.whatsapp-link-consulta');
+        if (!existingLink) {
+            const phoneNumber = "YOUR_PHONE_NUMBER_HERE"; // Asegúrate de reemplazar esto con tu número
+            const whatsappLink = document.createElement('a');
+            whatsappLink.innerText = 'Consultar';
+            whatsappLink.href = `https://wa.me/${phoneNumber}`;
+            whatsappLink.target = '_blank';
+            // Agrega una clase al enlace
+            whatsappLink.classList.add('whatsapp-link-consulta');
+            // Limpia el contenido actual y añade el enlace de WhatsApp
+            while (element.firstChild) {
+                element.removeChild(element.firstChild);
+            }
+            element.appendChild(whatsappLink);
         }
-        element.appendChild(whatsappLink);
     });
 });
 document.addEventListener("DOMContentLoaded", function () {
