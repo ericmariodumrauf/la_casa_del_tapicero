@@ -1,28 +1,20 @@
-import {
-	ArrowRightOnRectangleIcon,
-	CheckIcon,
-	// XMarkIcon,
-} from '@heroicons/react/24/outline';
+import { CheckIcon } from '@heroicons/react/24/outline';
 import { twMerge } from 'tailwind-merge';
-import { memo, useEffect } from '@wordpress/element';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
-	withSelect,
-	withDispatch,
-	useSelect,
-	useDispatch,
-} from '@wordpress/data';
+	memo,
+	useEffect,
+	useLayoutEffect,
+	useRef,
+	useCallback,
+} from '@wordpress/element';
+import { withSelect, withDispatch, useSelect } from '@wordpress/data';
 import { compose } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useStateValue } from '../../store/store';
-import {
-	classNames,
-	getLocalStorageItem,
-	setLocalStorageItem,
-} from './helpers/index';
-import Button from './components/button';
-import Type from './type';
-import BusinessName from './business-name';
+import { saveGutenbergAsDefaultBuilder } from '../../utils/functions';
+import { classNames, setLocalStorageItem } from './helpers/index';
 import DescribeBusiness from './describe-business';
 import BusinessContact from './business-contact';
 import Images from './images';
@@ -35,11 +27,14 @@ import { STORE_KEY } from './store';
 import LimitExceedModal from './components/limit-exceeded-modal';
 import GetStarted from './get-started-step-ai';
 import ContinueProgressModal from './components/continue-progress-modal';
+import AiBuilderExitButton from './components/ai-builder-exit-button';
 import Features from './features';
+import { Fragment } from 'react';
+import { AnimatePresence } from 'framer-motion';
+import BusinessDetails from './business-details';
+//import HeaderCreditStatus from './header-credit-status';
 
-const { imageDir } = starterTemplates;
-
-console.log( 'astraSitesVars: ', astraSitesVars );
+const { logoUrl } = starterTemplates;
 
 const steps = [
 	{
@@ -47,46 +42,51 @@ const steps = [
 		hideSidebar: true,
 		hideCloseIcon: true,
 		hideStep: true,
+		hideCredits: true,
 	},
 	{
 		stepNumber: 1,
-		name: 'Type',
-		description: 'Select who this website is for',
+		name: 'Let’s Start',
+		description: 'Name, language & type',
 		screen: 'type',
-		component: <Type />,
+		component: <BusinessDetails />,
+		hideCredits: false,
 	},
-	{
+	/* {
 		stepNumber: 2,
 		name: 'Name',
 		description: 'What is the name?',
 		screen: 'name',
 		component: <BusinessName />,
-	},
+	}, */
 	{
-		stepNumber: 3,
+		stepNumber: 2,
 		name: 'Describe',
 		description: 'Some details please',
 		screen: 'details',
 		component: <DescribeBusiness />,
+		hideCredits: false,
 	},
 	{
-		stepNumber: 4,
+		stepNumber: 3,
 		name: 'Contact',
 		description: 'How can people get in touch',
 		screen: 'contact-details',
 		component: <BusinessContact />,
+		hideCredits: false,
 	},
 	{
-		stepNumber: 5,
+		stepNumber: 4,
 		name: 'Select Images',
 		description: 'Select relevant images as needed',
 		screen: 'images',
 		contentClassName:
 			'px-0 pt-0 md:px-0 md:pt-0 lg:px-0 lg:pt-0 xl:px-0 xl:pt-0',
 		component: <Images />,
+		hideCredits: false,
 	},
 	{
-		stepNumber: 6,
+		stepNumber: 5,
 		name: 'Design',
 		description: 'Choose a structure for your website',
 		screen: 'template',
@@ -94,27 +94,9 @@ const steps = [
 			'px-0 pt-0 md:px-0 md:pt-0 lg:px-0 lg:pt-0 xl:px-0 xl:pt-0',
 
 		component: <SelectTemplate />,
+		hideCredits: false,
 	},
-	{
-		stepNumber: 7,
-		name: 'Features',
-		description: 'Select features as you need',
-		screen: 'features',
-		contentClassName:
-			'px-0 pt-0 md:px-0 md:pt-0 lg:px-0 lg:pt-0 xl:px-0 xl:pt-0',
-		component: <Features />,
-	},
-	{
-		stepNumber: 8,
-		// name: 'Building Website', // actual name
-		// description: 'Building your site',
-		name: 'Configure',
-		description: 'Personalize your website',
-		screen: 'building-website',
-		hideCloseIcon: true,
-		component: <WebsiteBuilding />,
-	},
-	{
+	/* {
 		name: 'Preview',
 		description: 'Preview your website',
 		screen: 'preview',
@@ -122,26 +104,56 @@ const steps = [
 		hideSidebar: true,
 		hideCloseIcon: true,
 		hideStep: true,
+	}, */
+	{
+		stepNumber: 6,
+		name: 'Features',
+		description: 'Select features as you need',
+		screen: 'features',
+		contentClassName:
+			'px-0 pt-0 md:px-0 md:pt-0 lg:px-0 lg:pt-0 xl:px-0 xl:pt-0',
+		component: <Features />,
+		hideCredits: false,
 	},
 	{
-		stepNumber: 9,
+		stepNumber: 7,
+		// name: 'Building Website', // actual name
+		// description: 'Building your site',
+		name: 'Configure',
+		description: 'Personalize your website',
+		screen: 'building-website',
+		hideCloseIcon: true,
+		component: <WebsiteBuilding />,
+		hideStep: true,
+		hideCredits: true,
+	},
+	{
+		stepNumber: 8,
 		// name: 'Migrate', // actual name
 		// description: 'Migrating your site',
 		// screen: 'migrate',
 		name: 'Done',
 		description: 'Your website is ready!',
-		screen: 'done',
+		screen: 'migration',
 		component: <ImportAiSIte />,
+		hideStep: true,
+		hideCredits: true,
 	},
 	{
 		name: 'Done',
-		description: 'Your website is ready!',
+		description: 'Congratulations! Your website is ready!',
 		screen: 'done',
 		contentClassName: 'pt-0 md:pt-0 lg:pt-0 xl:pt-0',
 		component: <BuildDone />,
 		hideStep: true,
+		hideCredits: true,
 	},
 ];
+export const TOTAL_STEPS = steps.length;
+const zipPlans = astraSitesVars?.zip_plans;
+const sitesRemaining = zipPlans?.plan_data?.remaining;
+const aiSitesRemainingCount = sitesRemaining?.ai_sites_count;
+const allSitesRemainingCount = sitesRemaining?.all_sites_count;
 
 const OnboardingAI = ( {
 	togglePopup,
@@ -150,13 +162,15 @@ const OnboardingAI = ( {
 	currentStep,
 	setAIStep,
 } ) => {
-	const { setWebsiteOnboardingAIDetails } = useDispatch( STORE_KEY );
-	const [ { currentIndex }, dispatch ] = useStateValue();
+	const [ { currentIndex, builder }, dispatch ] = useStateValue();
+	const urlParams = new URLSearchParams( window.location.search );
+	const authenticated = astraSitesVars?.zip_token_exists;
 
-	const { websiteVersionList } = useSelect( ( select ) => {
-		const { getWebsiteVersionList } = select( STORE_KEY );
+	// const { setLimitExceedModal } = useDispatch( STORE_KEY );
+	const { continueProgressModal } = useSelect( ( select ) => {
+		const { getContinueProgressModalInfo } = select( STORE_KEY );
 		return {
-			websiteVersionList: getWebsiteVersionList(),
+			continueProgressModal: getContinueProgressModalInfo(),
 		};
 	} );
 
@@ -164,30 +178,134 @@ const OnboardingAI = ( {
 		const { getOnboardingAI } = select( STORE_KEY );
 		return getOnboardingAI();
 	} );
+	const selectedTemplate = aiOnboardingDetails?.stepData?.selectedTemplate;
+	const routerHistory = useNavigate();
+	const location = useLocation();
+	const prevStepRef = useRef( currentStep );
 
 	useEffect( () => {
-		if ( ! aiOnboardingDetails?.stepData?.businessType?.id ) return;
+		if (
+			! aiOnboardingDetails?.stepData?.businessType ||
+			'' === aiOnboardingDetails?.stepData?.businessType
+		) {
+			return;
+		}
 		setLocalStorageItem( 'ai-onboarding-details', aiOnboardingDetails );
 	}, [ aiOnboardingDetails ] );
 
-	useEffect( () => {
-		const savedAiOnboardingDetails = getLocalStorageItem(
-			'ai-onboarding-details'
+	const updateRoute = ( step ) => {
+		if ( ! step ) {
+			urlParams.delete( 'ai' );
+			urlParams.delete( 'ci' );
+		} else {
+			urlParams.set( 'ai', step );
+		}
+		routerHistory(
+			`${ window.location.pathname }?${ urlParams.toString() }`
 		);
-
-		if ( ! savedAiOnboardingDetails ) return;
-		setWebsiteOnboardingAIDetails( savedAiOnboardingDetails );
-	}, [] );
-
-	const handleClosePopup = ( event ) => {
-		event?.preventDefault();
-		event?.stopPropagation();
-
-		dispatch( {
-			type: 'set',
-			currentIndex: 0,
-		} );
 	};
+
+	const createSiteStep = steps.length - 2;
+	const migrateSiteStep = steps.length - 1;
+
+	useEffect( () => {
+		const aiStep = +urlParams.get( 'ai' );
+
+		if ( continueProgressModal?.open ) {
+			return;
+		}
+
+		if ( ! aiStep || isNaN( aiStep ) ) {
+			updateRoute( currentStep );
+			return;
+		}
+
+		if ( aiStep === 1 && authenticated ) {
+			dispatch( {
+				type: 'set',
+				currentIndex: 0,
+			} );
+		}
+
+		if ( ! authenticated && aiStep !== 1 ) {
+			setAIStep( 1 );
+			return;
+		}
+
+		// If currentStep is Create Site or Migrate Site, don't change the step.
+		if (
+			currentStep === createSiteStep ||
+			currentStep === migrateSiteStep
+		) {
+			return;
+		}
+
+		if ( aiStep !== currentStep ) {
+			setAIStep( aiStep );
+		}
+	}, [ location ] );
+
+	useEffect( () => {
+		const aiStep = +urlParams.get( 'ai' );
+
+		if ( continueProgressModal?.open ) {
+			return;
+		}
+
+		if ( currentStep === aiStep ) {
+			return;
+		}
+
+		// If currentStep hasn't changed, don't update the URL
+		if (
+			aiStep &&
+			! isNaN( aiStep ) &&
+			currentStep === prevStepRef.current
+		) {
+			return;
+		}
+		prevStepRef.current = currentStep;
+		updateRoute( currentStep );
+	}, [ currentStep, continueProgressModal?.open ] );
+
+	const handleBackToBuilderType = useCallback(
+		( event ) => {
+			const {
+				target: { location: oldLocation },
+			} = event;
+			const oldUrlParams = new URLSearchParams( oldLocation.search );
+
+			if (
+				currentStep === createSiteStep ||
+				currentStep === migrateSiteStep
+			) {
+				return;
+			}
+
+			const aiStep = +oldUrlParams.get( 'ai' );
+			const ciValue = +oldUrlParams.get( 'ci' );
+
+			if ( ! ciValue || ! aiStep ) {
+				oldUrlParams.delete( 'ai' );
+				oldUrlParams.delete( 'ci' );
+				dispatch( {
+					type: 'set',
+					builder: 'gutenberg',
+					currentIndex: 0,
+				} );
+				saveGutenbergAsDefaultBuilder();
+			}
+		},
+		[ currentStep ]
+	);
+
+	useLayoutEffect( () => {
+		window.addEventListener( 'popstate', handleBackToBuilderType );
+
+		return () => {
+			window.removeEventListener( 'popstate', handleBackToBuilderType );
+		};
+	}, [ handleBackToBuilderType ] );
 
 	useEffect( () => {
 		if ( togglePopup ) {
@@ -214,7 +332,9 @@ const OnboardingAI = ( {
 	};
 
 	const dynamicClass = function ( cStep, sIndex ) {
-		if ( steps?.[ sIndex ]?.screen === 'done' ) return '';
+		if ( steps?.[ sIndex ]?.screen === 'features' ) {
+			return '';
+		}
 		if ( cStep === sIndex + 1 ) {
 			return 'bg-gradient-to-b from-white to-transparent';
 		}
@@ -225,8 +345,6 @@ const OnboardingAI = ( {
 	};
 
 	useEffect( () => {
-		const urlParams = new URLSearchParams( window.location.search );
-
 		const token = urlParams.get( 'token' );
 		if ( token ) {
 			let url = removeQueryArgs(
@@ -239,185 +357,219 @@ const OnboardingAI = ( {
 			url = addQueryArgs( url, { ci: currentIndex } );
 
 			window.onbeforeunload = null;
-			window.location = url;
+			window.history.replaceState( {}, '', url );
 		}
 	}, [] );
 
+	useEffect( () => {
+		if (
+			( typeof aiSitesRemainingCount === 'number' &&
+				aiSitesRemainingCount <= 0 ) ||
+			( typeof allSitesRemainingCount === 'number' &&
+				allSitesRemainingCount <= 0 )
+		) {
+			// setLimitExceedModal( {
+			// 	open: true,
+			// } );
+			if ( 'ai-builder' === builder ) {
+				dispatch( {
+					type: 'set',
+					builder: 'gutenberg',
+				} );
+
+				const content = new FormData();
+				content.append( 'action', 'astra-sites-change-page-builder' );
+				content.append( '_ajax_nonce', astraSitesVars._ajax_nonce );
+				content.append( 'page_builder', 'gutenberg' );
+
+				fetch( ajaxurl, {
+					method: 'post',
+					body: content,
+				} );
+			}
+			return dispatch( {
+				type: 'set',
+				currentIndex: 0,
+			} );
+		}
+	}, [] );
+
+	const getStepIndex = ( value, by = 'screen' ) => {
+		return steps.findIndex( ( item ) => item[ by ] === value ) + 1;
+	};
+
 	return (
-		<div
-			id="spectra-onboarding-ai"
-			className={ `font-figtree ${
-				steps[ currentStep - 1 ]?.hideSidebar
-					? ''
-					: 'grid grid-cols-1 lg:grid-cols-[360px_1fr]'
-			} h-screen` }
-		>
-			{ ! steps[ currentStep - 1 ]?.hideSidebar && (
-				<div className="hidden lg:flex lg:w-full lg:flex-col z-[1] overflow-y-auto">
-					<div className="flex flex-col gap-y-5 overflow-y-hidden border-r border-gray-200 bg-zip-dark-theme-bg px-6 relative h-screen">
-						<div className="flex h-16 shrink-0 items-center relative">
-							<img
-								className="w-10 h-10"
-								src={ `${ imageDir }/build-with-ai/st-logo-dark.svg` }
-								alt={ __( 'Build with AI', 'astra-sites' ) }
-							/>
-							<div className="absolute top-1 left-[30px] w-10 h-5 text-xs rounded-[99px] flex items-center justify-center px-3 zw-xs-normal bg-white text-zip-dark-theme-content-background">
-								{ __( 'Beta', 'astra-sites' ) }
+		<>
+			<div
+				id="spectra-onboarding-ai"
+				className={ `font-figtree ${
+					steps[ currentStep - 1 ]?.hideSidebar
+						? ''
+						: 'grid grid-cols-1 lg:grid-cols-[360px_1fr]'
+				} h-screen` }
+			>
+				{ ! steps[ currentStep - 1 ]?.hideSidebar && (
+					<div className="hidden lg:flex lg:w-full lg:flex-col z-[1] overflow-y-auto">
+						<div className="flex flex-col gap-y-5 overflow-y-hidden border-r border-gray-200 bg-zip-dark-theme-bg px-6 relative h-screen">
+							<div className="mt-3 flex h-16 shrink-0 items-center relative">
+								<img
+									className="w-10 h-10"
+									src={ logoUrl }
+									alt={ __( 'Build with AI', 'astra-sites' ) }
+								/>
+								{ /* Close button */ }
+								{ /* Do not show on Site Creation & Migration step */ }
+								{ getStepIndex( 'migration' ) !== currentStep &&
+									getStepIndex( 'building-website' ) !==
+										currentStep && (
+										<div className="absolute top-3 right-0">
+											<AiBuilderExitButton />
+										</div>
+									) }
 							</div>
-						</div>
-						<nav className="flex flex-col gap-y-1 overflow-y-auto">
-							{ steps.map(
-								(
-									{ name, description, hideStep, stepNumber },
-									stepIdx
-								) =>
-									hideStep ? (
-										<></>
-									) : (
-										<div
-											className="flex gap-3"
-											key={ stepIdx }
-										>
+							<nav className="flex flex-col gap-y-1 overflow-y-auto">
+								{ steps.map(
+									(
+										{
+											name,
+											description,
+											hideStep,
+											stepNumber,
+										},
+										stepIdx
+									) =>
+										hideStep ? (
+											<Fragment key={ stepIdx } />
+										) : (
 											<div
-												className={ classNames(
-													'flex flex-col gap-y-1 items-center',
-													stepIdx === steps.length - 1
-														? 'justify-start'
-														: 'justify-center'
-												) }
+												className="flex gap-3"
+												key={ stepIdx }
 											>
 												<div
 													className={ classNames(
-														'rounded-full border text-xs font-semibold flex items-center justify-center w-6 h-6',
-														dynamicStepClass(
-															currentStep,
-															stepIdx
-														)
+														'flex flex-col gap-y-1 items-center',
+														stepIdx ===
+															steps.length - 1
+															? 'justify-start'
+															: 'justify-center'
 													) }
 												>
-													{ currentStep >
-													stepIdx + 1 ? (
-														<CheckIcon className="text-white h-3 w-3" />
-													) : (
-														<span>
-															{ stepNumber }
-														</span>
-													) }
-												</div>
-												{ steps.length - 1 >
-													stepIdx && (
 													<div
 														className={ classNames(
-															'h-8 w-[1px]',
-															dynamicClass(
+															'rounded-full border text-xs font-semibold flex items-center justify-center w-6 h-6',
+															dynamicStepClass(
 																currentStep,
 																stepIdx
 															)
 														) }
-													/>
-												) }
-											</div>
-											<div className="flex flex-col gap-y-1 items-start justify-start ">
-												<div
-													className={ classNames(
-														'text-sm font-semibold',
-														currentStep >=
-															stepIdx + 1
-															? 'text-zip-app-inactive-icon'
-															: 'text-zip-dark-theme-body',
-														currentStep ===
-															stepIdx + 1 &&
-															'text-zip-dark-theme-heading'
+													>
+														{ currentStep >
+														stepIdx + 1 ? (
+															<CheckIcon className="text-white h-3 w-3" />
+														) : (
+															<span>
+																{ stepNumber }
+															</span>
+														) }
+													</div>
+													{ steps.length - 1 >
+														stepIdx && (
+														<div
+															className={ classNames(
+																'h-8 w-[1px]',
+																dynamicClass(
+																	currentStep,
+																	stepIdx
+																)
+															) }
+														/>
 													) }
-												>
-													{ name }
 												</div>
-												<div
-													className={ classNames(
-														'text-sm font-normal',
-														currentStep >=
-															stepIdx + 1
-															? 'text-zip-app-inactive-icon'
-															: 'text-zip-app-inactive-icon',
-														currentStep ===
-															stepIdx + 1 &&
-															'text-zip-dark-theme-body'
-													) }
-												>
-													{ description }
+												<div className="flex flex-col gap-y-1 items-start justify-start ">
+													<div
+														className={ classNames(
+															'text-sm font-semibold',
+															currentStep >=
+																stepIdx + 1
+																? 'text-zip-app-inactive-icon'
+																: 'text-zip-dark-theme-body',
+															currentStep ===
+																stepIdx + 1 &&
+																'text-zip-dark-theme-heading'
+														) }
+													>
+														{ name }
+													</div>
+													<div
+														className={ classNames(
+															'text-sm font-normal',
+															currentStep >=
+																stepIdx + 1
+																? 'text-zip-app-inactive-icon'
+																: 'text-zip-app-inactive-icon',
+															currentStep ===
+																stepIdx + 1 &&
+																'text-zip-dark-theme-body'
+														) }
+													>
+														{ description }
+													</div>
 												</div>
 											</div>
-										</div>
-									)
+										)
+								) }
+							</nav>
+						</div>
+					</div>
+				) }
+				<main
+					id="sp-onboarding-content-wrapper"
+					className="flex-1 overflow-x-hidden h-screen bg-zip-app-light-bg"
+				>
+					<div className="h-full w-full relative flex">
+						<div
+							className={ twMerge(
+								`w-full max-h-full flex flex-col flex-auto items-center`,
+								steps[ currentStep - 1 ]?.hideSidebar
+									? ''
+									: 'px-5 pt-5 md:px-10 md:pt-10 lg:px-14 lg:pt-12 xl:px-20 xl:pt-12',
+								'',
+								steps[ currentStep - 1 ]?.contentClassName
 							) }
-						</nav>
-
-						{ /* Do not show on Migration step */ }
-						{ !! ( currentStep < 10 ) && (
-							<div className="flex items-center justify-center mb-5 mt-auto h-[38px]">
-								<Button
-									onClick={ ( e ) => {
-										if ( websiteVersionList?.length >= 1 ) {
-											setAIStep( 9 );
-										} else {
-											handleClosePopup( e );
-										}
-									} }
-									type="button"
-									variant="dark"
-									className="flex-1 cursor-pointer"
-									isSmall
-									hasPrefixIcon
+						>
+							{ /* { ! steps[ currentStep - 1 ]?.hideCloseIcon && (
+								<div
+									className="fixed top-0 right-0 z-50"
+									onClick={ handleClosePopup }
+									aria-hidden="true"
 								>
-									{ console.log( { currentStep } ) }
-									<ArrowRightOnRectangleIcon className="w-5 h-5" />
-									{
-										<span>
-											{ websiteVersionList?.length >= 1
-												? 'Back to Preview'
-												: 'Exit' }
-										</span>
-									}
-								</Button>
-							</div>
-						) }
-					</div>
-				</div>
-			) }
-			<main
-				id="sp-onboarding-content-wrapper"
-				className="flex-1 overflow-x-hidden h-screen bg-zip-app-light-bg"
-			>
-				<div className="h-full w-full relative flex">
-					<div
-						className={ twMerge(
-							`w-full max-h-full flex flex-col flex-auto items-center`,
-							steps[ currentStep - 1 ]?.hideSidebar
-								? ''
-								: 'px-5 pt-5 md:px-10 md:pt-10 lg:px-14 lg:pt-12 xl:px-20 xl:pt-12',
-							'',
-							steps[ currentStep - 1 ]?.contentClassName
-						) }
-					>
-						{ /* { ! steps[ currentStep - 1 ]?.hideCloseIcon && (
-							<div
-								className="fixed top-0 right-0 z-50"
-								onClick={ handleClosePopup }
-								aria-hidden="true"
-							>
-								<div className="absolute top-5 right-5 cursor-pointer">
-									<XMarkIcon className="w-8 text-zip-app-inactive-icon hover:text-icon-secondary transition duration-150 ease-in-out" />
+									<div className="absolute top-5 right-5 cursor-pointer">
+										<XMarkIcon className="w-8 text-zip-app-inactive-icon hover:text-icon-secondary transition duration-150 ease-in-out" />
+									</div>
 								</div>
-							</div>
+							) } */ }
+							{ /* Step component will go here */ }
+							{ steps[ currentStep - 1 ]?.component }
+						</div>
+						{ /* { ! steps[ currentStep - 1 ]?.hideCredits && (
+							<HeaderCreditStatus />
 						) } */ }
-						{ /* Step component will go here */ }
-						{ steps[ currentStep - 1 ].component }
 					</div>
-				</div>
-			</main>
-			<LimitExceedModal />
-			<ContinueProgressModal />
-		</div>
+				</main>
+				<LimitExceedModal />
+				<ContinueProgressModal />
+			</div>
+			<div className="absolute top-0 left-0 z-20">
+				<AnimatePresence>
+					{ !! selectedTemplate &&
+						currentStep ===
+							steps.findIndex(
+								( item ) => item.name === 'Design'
+							) +
+								1 && <PreviewWebsite /> }
+				</AnimatePresence>
+			</div>
+		</>
 	);
 };
 

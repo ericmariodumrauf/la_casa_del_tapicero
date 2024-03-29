@@ -76,6 +76,44 @@ class Sync_Library {
 	}
 
 	/**
+	 * Get Spectra Common CSS.
+	 *
+	 * @return string
+	 */
+	public function get_server_spectra_common_css() {
+
+		Helper::instance()->ast_block_templates_log( 'BLOCK: Getting Spectra Common CSS' );
+
+		$common_css_content = get_option( 'ast-block-templates-spectra-common-styles', '' );
+
+		if ( ! empty( $common_css_content ) ) {
+			return $common_css_content;
+		}
+
+		$api_args = array(
+			'timeout' => 50,
+		);
+
+		$query_args = array();
+		$api_url = add_query_arg( $query_args, trailingslashit( AST_BLOCK_TEMPLATES_LIBRARY_URL ) . 'wp-json/astra-blocks/v2/spectra-common-styles' );
+
+		Helper::instance()->ast_block_templates_log( 'BLOCK: ' . $api_url );
+
+		$response = wp_remote_get( $api_url, $api_args );
+
+		if ( ! is_wp_error( $response ) || wp_remote_retrieve_response_code( $response ) === 200 ) {
+			$res_data = json_decode( wp_remote_retrieve_body( $response ), true );
+
+			if ( isset( $res_data['data']['spectra-common-styles'] ) ) {
+				update_option( 'ast-block-templates-spectra-common-styles', $res_data['data']['spectra-common-styles'] );
+				return $res_data['data']['spectra-common-styles'];
+			}
+		}
+
+		return '';
+	}
+
+	/**
 	 * Start Importer
 	 *
 	 * @since 1.0.0

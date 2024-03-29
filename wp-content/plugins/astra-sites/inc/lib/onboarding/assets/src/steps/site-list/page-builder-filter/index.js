@@ -3,13 +3,33 @@ import { ToggleDropdown } from '@brainstormforce/starter-templates-components';
 import { __ } from '@wordpress/i18n';
 import { useStateValue } from '../../../store/store';
 import { initialState } from '../../../store/reducer';
-const { imageDir, isBrizyEnabled, isElementorDisabled } = starterTemplates;
+const {
+	imageDir,
+	isBrizyEnabled,
+	isElementorDisabled,
+	isBeaverBuilderDisabled,
+} = starterTemplates;
+
+import { useDispatch } from '@wordpress/data';
+const zipPlans = astraSitesVars?.zip_plans;
+const sitesRemaining = zipPlans?.plan_data?.remaining;
+const aiSitesRemainingCount = sitesRemaining?.ai_sites_count;
+const allSitesRemainingCount = sitesRemaining?.all_sites_count;
 
 const PageBuilder = () => {
 	const [ { builder }, dispatch ] = useStateValue();
+	const { setLimitExceedModal } = useDispatch( 'ast-block-templates' );
+
 	if ( builder === 'fse' ) {
 		return null;
 	}
+
+	const isLimitReached =
+		( typeof aiSitesRemainingCount === 'number' &&
+			aiSitesRemainingCount <= 0 ) ||
+		( typeof allSitesRemainingCount === 'number' &&
+			allSitesRemainingCount <= 0 );
+
 	const buildersList = [
 		{
 			id: 'gutenberg',
@@ -25,6 +45,11 @@ const PageBuilder = () => {
 			id: 'beaver-builder',
 			title: __( 'Beaver Builder', 'astra-sites' ),
 			image: `${ imageDir }beaver-builder.svg`,
+		},
+		{
+			id: 'ai-builder',
+			title: __( 'AI Website Builder', 'astra-sites' ),
+			image: `${ imageDir }ai-builder.svg`,
 		},
 	];
 
@@ -48,6 +73,18 @@ const PageBuilder = () => {
 		}
 	}
 
+	if ( isBeaverBuilderDisabled === '1' ) {
+		// Find the index of the Beaver builder in the array.
+		const indexToRemove = buildersList.findIndex(
+			( pageBuilder ) => pageBuilder.id === 'beaver-builder'
+		);
+
+		// Remove the Beaver builder if it exists.
+		if ( indexToRemove !== -1 ) {
+			buildersList.splice( indexToRemove, 1 );
+		}
+	}
+
 	return (
 		<div className="st-page-builder-filter">
 			<ToggleDropdown
@@ -55,24 +92,46 @@ const PageBuilder = () => {
 				options={ buildersList }
 				className="st-page-builder-toggle"
 				onClick={ ( event, option ) => {
-					dispatch( {
-						type: 'set',
-						builder: option.id,
-						siteSearchTerm: '',
-						siteBusinessType: initialState.siteBusinessType,
-						selectedMegaMenu: initialState.selectedMegaMenu,
-						siteType: '',
-						siteOrder: 'popular',
-						onMyFavorite: false,
-					} );
+					if ( 'ai-builder' === option.id ) {
+						if ( isLimitReached ) {
+							setLimitExceedModal( {
+								open: true,
+							} );
+							// dispatch( {
+							// 	type: 'set',
+							// 	currentIndex: 0,
+							// } );
+						}
+						dispatch( {
+							type: 'set',
+							currentIndex: 1,
+							builder: option.id,
+						} );
+					} else {
+						dispatch( {
+							type: 'set',
+							builder: option.id,
+							siteSearchTerm: '',
+							siteBusinessType: initialState.siteBusinessType,
+							selectedMegaMenu: initialState.selectedMegaMenu,
+							siteType: '',
+							siteOrder: 'popular',
+							onMyFavorite: false,
+							currentIndex: 4,
+						} );
+					}
 
+					const pageBuilderOptionId =
+						isLimitReached && 'ai-builder' === option.id
+							? 'gutenberg'
+							: option.id;
 					const content = new FormData();
 					content.append(
 						'action',
 						'astra-sites-change-page-builder'
 					);
 					content.append( '_ajax_nonce', astraSitesVars._ajax_nonce );
-					content.append( 'page_builder', option.id );
+					content.append( 'page_builder', pageBuilderOptionId );
 
 					fetch( ajaxurl, {
 						method: 'post',

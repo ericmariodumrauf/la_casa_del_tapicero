@@ -13,6 +13,10 @@ const MyFavorite = () => {
 	const [ stateValue, dispatch ] = useStateValue();
 	const { onMyFavorite } = stateValue;
 
+	if ( 0 === stateValue.currentIndex ) {
+		return null;
+	}
+
 	const handleClick = ( event ) => {
 		event.stopPropagation();
 		dispatch( {

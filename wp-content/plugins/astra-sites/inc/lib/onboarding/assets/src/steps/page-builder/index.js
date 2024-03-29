@@ -3,7 +3,12 @@ import { __ } from '@wordpress/i18n';
 import { DefaultStep, PreviousStepLink } from '../../components/index';
 import { useStateValue } from '../../store/store';
 import './style.scss';
-const { imageDir, isBrizyEnabled, isElementorDisabled } = starterTemplates;
+const {
+	imageDir,
+	isBrizyEnabled,
+	isElementorDisabled,
+	isBeaverBuilderDisabled,
+} = starterTemplates;
 
 const PageBuilder = () => {
 	const [ { currentIndex }, dispatch ] = useStateValue();
@@ -105,27 +110,31 @@ const PageBuilder = () => {
 								<h6>{ __( 'Elementor', 'astra-sites' ) }</h6>
 							</div>
 						) }
-						<div
-							className="page-builder-item d-flex-center-align"
-							onClick={ () => {
-								update( 'beaver-builder' );
-							} }
-							tabIndex="0"
-							onKeyDown={ ( event ) =>
-								handleKeyPress( event, 'beaver-builder' )
-							}
-						>
-							<div className="beaver-builder-image-wrap image-wrap">
-								<img
-									src={ `${ imageDir }beaver-builder.svg` }
-									alt={ __(
-										'Beaver Builder',
-										'astra-sites'
-									) }
-								/>
+						{ isBeaverBuilderDisabled === '' && (
+							<div
+								className="page-builder-item d-flex-center-align"
+								onClick={ () => {
+									update( 'beaver-builder' );
+								} }
+								tabIndex="0"
+								onKeyDown={ ( event ) =>
+									handleKeyPress( event, 'beaver-builder' )
+								}
+							>
+								<div className="beaver-builder-image-wrap image-wrap">
+									<img
+										src={ `${ imageDir }beaver-builder.svg` }
+										alt={ __(
+											'Beaver Builder',
+											'astra-sites'
+										) }
+									/>
+								</div>
+								<h6>
+									{ __( 'Beaver Builder', 'astra-sites' ) }
+								</h6>
 							</div>
-							<h6>{ __( 'Beaver Builder', 'astra-sites' ) }</h6>
-						</div>
+						) }
 						{ isBrizyEnabled === '1' && (
 							<div
 								className="page-builder-item d-flex-center-align"

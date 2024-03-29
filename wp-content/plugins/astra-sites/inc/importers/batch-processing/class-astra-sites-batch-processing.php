@@ -1009,6 +1009,13 @@ if ( ! class_exists( 'Astra_Sites_Batch_Processing' ) ) :
 					'no_found_rows'  => true,
 					'post_status'    => 'publish',
 					'posts_per_page' => -1,
+					'meta_query'     => array( //phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+						array(
+							'key'     => '_astra_sites_imported_post',
+							'value'   => '1',
+							'compare' => '=',
+						),
+					),
 				);
 
 				$query = new WP_Query( $args );

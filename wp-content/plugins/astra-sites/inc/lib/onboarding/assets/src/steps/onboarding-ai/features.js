@@ -6,13 +6,15 @@ import {
 	SquaresPlusIcon,
 	CheckIcon,
 	ChatBubbleLeftEllipsisIcon,
-	WrenchIcon
+	WrenchIcon,
 } from '@heroicons/react/24/outline';
 import { useDispatch, useSelect } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
 import { STORE_KEY } from './store';
 import { classNames } from './helpers';
 import NavigationButtons from './navigation-buttons';
+import { useStateValue } from '../../store/store';
+import { limitExceeded, setToSessionStorage } from './utils/helpers';
 
 const fetchStatus = {
 	fetching: 'fetching',
@@ -25,10 +27,11 @@ const ICON_SET = {
 	'squares-plus': SquaresPlusIcon,
 	funnel: FunnelIcon,
 	'play-circle': PlayCircleIcon,
-	'live-chat' : ChatBubbleLeftEllipsisIcon,
+	'live-chat': ChatBubbleLeftEllipsisIcon,
 };
 
 const Features = () => {
+	const [ , dispatch ] = useStateValue();
 	const {
 		setSiteFeatures,
 		storeSiteFeatures,
@@ -47,6 +50,7 @@ const Features = () => {
 			businessDetails,
 			businessContact,
 			selectedTemplate,
+			siteLanguage,
 		},
 	} = useSelect( ( select ) => {
 		const { getSiteFeatures, getAIStepData } = select( STORE_KEY );
@@ -85,93 +89,93 @@ const Features = () => {
 		setSiteFeatures( featureId );
 	};
 
-	const limitExceeded = () => {
-		const zipPlans = astraSitesVars?.zip_plans;
-		const sitesRemaining = zipPlans?.plan_data?.remaining;
-		const aiSitesRemainingCount = sitesRemaining?.ai_sites_count;
-		const allSitesRemainingCount = sitesRemaining?.all_sites_count;
+	const handleGenerateContent =
+		( skip = false ) =>
+		async () => {
+			if ( isInProgress ) {
+				return;
+			}
 
-		if (
-			( typeof aiSitesRemainingCount === 'number' &&
-				aiSitesRemainingCount <= 0 ) ||
-			( typeof allSitesRemainingCount === 'number' &&
-				allSitesRemainingCount <= 0 )
-		) {
-			return true;
-		}
+			if ( limitExceeded() ) {
+				setLimitExceedModal( {
+					open: true,
+				} );
+				return;
+			}
+			setIsInProgress( true );
 
-		return false;
-	};
+			const formData = new window.FormData();
 
-	const handleGenerateContent = async () => {
-		if ( isInProgress ) {
-			return;
-		}
+			formData.append( 'action', 'ast-block-templates-ai-content' );
+			formData.append( 'security', astraSitesVars.ai_content_ajax_nonce );
+			formData.append( 'business_name', businessName );
+			formData.append( 'business_desc', businessDetails );
+			formData.append( 'business_category', businessType );
+			formData.append( 'images', JSON.stringify( selectedImages ) );
+			formData.append( 'image_keywords', JSON.stringify( keywords ) );
+			formData.append(
+				'business_address',
+				businessContact?.address || ''
+			);
+			formData.append( 'business_phone', businessContact?.phone || '' );
+			formData.append( 'business_email', businessContact?.email || '' );
+			formData.append(
+				'social_profiles',
+				JSON.stringify( businessContact?.socialMedia || [] )
+			);
 
-		if ( limitExceeded() ) {
-			setLimitExceedModal( {
-				open: true,
-			} );
-			return;
-		}
-		setIsInProgress( true );
-
-		const formData = new window.FormData();
-
-		formData.append( 'action', 'ast-block-templates-ai-content' );
-		formData.append( 'security', astraSitesVars.ai_content_ajax_nonce );
-		formData.append( 'business_name', businessName );
-		formData.append( 'business_desc', businessDetails );
-		formData.append( 'business_category', businessType.slug );
-		formData.append( 'images', JSON.stringify( selectedImages ) );
-		formData.append( 'image_keywords', JSON.stringify( keywords ) );
-		formData.append( 'business_address', businessContact?.address || '' );
-		formData.append( 'business_phone', businessContact?.phone || '' );
-		formData.append( 'business_email', businessContact?.email || '' );
-		formData.append(
-			'social_profiles',
-			JSON.stringify( businessContact?.socialMedia || [] )
-		);
-
-		const response = await apiFetch( {
-			path: 'zipwp/v1/site',
-			method: 'POST',
-			data: {
+			const createSitePayload = {
 				template: selectedTemplate,
 				business_email: businessContact?.email,
 				business_description: businessDetails,
 				business_name: businessName,
 				business_phone: businessContact?.phone,
 				business_address: businessContact?.address,
-				business_category: businessType.slug,
-				business_category_name: businessType.name,
+				business_category: businessType,
 				image_keyword: keywords,
 				social_profiles: businessContact?.socialMedia,
+				language: siteLanguage,
 				images: selectedImages,
-				site_features: siteFeatures
-					.filter( ( feature ) => feature.enabled )
-					.map( ( feature ) => feature.id ),
-			},
-		} );
+				site_features: skip
+					? []
+					: siteFeatures
+							.filter( ( feature ) => feature.enabled )
+							.map( ( feature ) => feature.id ),
+			};
+			setToSessionStorage( 'create-site-payload', createSitePayload );
 
-		if ( response.success ) {
-			// Close the onboarding screen on success.
-			setWebsiteInfoAIStep( response.data.data );
-			setNextAIStep();
-		} else {
-			// Handle error.
-			const message = response?.data?.data;
-			if (
-				typeof message === 'string' &&
-				message.includes( 'Usage limit' )
-			) {
-				setLimitExceedModal( {
-					open: true,
+			const response = await apiFetch( {
+				path: 'zipwp/v1/site',
+				method: 'POST',
+				data: createSitePayload,
+			} );
+
+			if ( response.success ) {
+				const websiteData = response.data.data.site;
+				// Close the onboarding screen on success.
+				setWebsiteInfoAIStep( websiteData );
+				dispatch( {
+					type: 'set',
+					templateId: websiteData.uuid,
+					importErrorMessages: {},
+					importErrorResponse: [],
+					importError: false,
 				} );
+				setNextAIStep();
+			} else {
+				// Handle error.
+				const message = response?.data?.data;
+				if (
+					typeof message === 'string' &&
+					message.includes( 'Usage limit' )
+				) {
+					setLimitExceedModal( {
+						open: true,
+					} );
+				}
+				setIsInProgress( false );
 			}
-			setIsInProgress( false );
-		}
-	};
+		};
 
 	useEffect( () => {
 		if ( isFetchingStatus === fetchStatus.fetching ) {
@@ -212,7 +216,7 @@ const Features = () => {
 											<WrenchIcon className="text-zip-body-text w-7 h-7" />
 										) }
 									</div>
-									<div className="space-y-1">
+									<div className="space-y-1 mr-5">
 										<p className="p-0 m-0 !text-base !font-semibold !text-zip-app-heading">
 											{ feature.title }
 										</p>
@@ -246,7 +250,9 @@ const Features = () => {
 					} ) }
 				{ /* Skeleton */ }
 				{ isFetchingStatus === fetchStatus.fetching &&
-					Array.from( { length: Object.keys(ICON_SET).length } ).map( ( _, index ) => (
+					Array.from( {
+						length: Object.keys( ICON_SET ).length,
+					} ).map( ( _, index ) => (
 						<div
 							key={ index }
 							className="relative py-4 pl-4 pr-5 rounded-md shadow-sm border border-solid bg-white border-transparent"
@@ -280,8 +286,10 @@ const Features = () => {
 			<NavigationButtons
 				continueButtonText="Start Building"
 				onClickPrevious={ setPreviousAIStep }
-				onClickContinue={ handleGenerateContent }
+				onClickContinue={ handleGenerateContent() }
+				onClickSkip={ handleGenerateContent( true ) }
 				loading={ isInProgress }
+				skipButtonText="Skip & Start Building"
 			/>
 		</div>
 	);

@@ -1,14 +1,33 @@
 import { PlusIcon, XMarkIcon } from '@heroicons/react/20/solid';
-import { useState } from '@wordpress/element';
+import { useState, useMemo } from '@wordpress/element';
 import {
 	FacebookIcon,
 	InstagramIcon,
 	LinkedInIcon,
 	TwitterIcon,
 	YouTubeIcon,
+	GoogleIcon,
+	YelpIcon,
 } from '../../ui/icons';
 import Dropdown from './dropdown';
 import Input from './input';
+
+const getPlaceholder = ( socialMedia ) => {
+	switch ( socialMedia ) {
+		case 'Facebook':
+		case 'Twitter':
+		case 'Instagram':
+		case 'LinkedIn':
+		case 'YouTube':
+			return `Enter your ${ socialMedia } account URL`;
+		case 'Google My Business':
+			return 'Enter your Google Business URL';
+		case 'Yelp':
+			return 'Enter your Yelp business URL';
+		default:
+			return 'Enter your account URL';
+	}
+};
 
 const SocialMediaItem = ( { socialMedia, onRemove, onEdit } ) => {
 	const [ isEditing, setIsEditing ] = useState( false );
@@ -68,7 +87,7 @@ const SocialMediaItem = ( { socialMedia, onRemove, onEdit } ) => {
 						}
 					} }
 					name="socialMediaURL"
-					inputClassName="!border-0 !bg-transparent !shadow-none focus:!ring-0"
+					inputClassName="!border-0 !bg-transparent !shadow-none focus:!ring-0 px-0"
 					value={ editedUrl }
 					onChange={ ( e ) => {
 						setEditedUrl( e.target.value );
@@ -116,6 +135,16 @@ const SocialMediaAdd = ( { list, onChange } ) => {
 			id: 'youtube',
 			icon: YouTubeIcon,
 		},
+		{
+			name: 'Google My Business',
+			id: 'google',
+			icon: GoogleIcon,
+		},
+		{
+			name: 'Yelp',
+			id: 'yelp',
+			icon: YelpIcon,
+		},
 	];
 
 	const [ selectedSocialMedia, setSelectedSocialMedia ] = useState( null );
@@ -126,7 +155,32 @@ const SocialMediaAdd = ( { list, onChange } ) => {
 		facebook: 'facebook.com/',
 		instagram: 'instagram.com/',
 		linkedin: 'linkedin.com/in/',
-		youtube: 'youtube.com/@',
+		youtube: 'youtube.com/',
+		google: 'google.com/maps/place',
+		yelp: 'yelp.com/biz/',
+	};
+
+	const socialMediaHandlesRegex = {
+		twitter: /twitter\.com\/[a-zA-Z0-9_#?&=+]+\/?$/,
+		facebook: /facebook\.com\/[a-zA-Z0-9._#?&=+]+\/?$/,
+		instagram: /instagram\.com\/[a-zA-Z0-9._@#?&=+]+\/?$/,
+		linkedin: /linkedin\.com\/in\/([a-zA-Z0-9\-]+)\/?$/,
+		youtube: /youtube\.com\/[a-zA-Z0-9_#?&=+@]+\/?$/,
+		google: /google\.com\/maps\/place\/[a-zA-Z0-9-+_.#?&=+]+\/?$/,
+		yelp: /yelp\.com\/biz\/[a-zA-Z0-9-_#?&=+]+\/?$/,
+	};
+	const validateSocialMediaURL = ( url, type ) => {
+		if ( url === '' ) {
+			return true;
+		}
+		return socialMediaHandlesRegex[ type ].test( url );
+	};
+
+	const extractHandle = ( input ) => {
+		const urlParts = input
+			.split( '/' )
+			.filter( ( part ) => part && ! part.includes( '.' ) );
+		return urlParts?.pop()?.replace( 'http:' )?.replace( 'https:' );
 	};
 
 	const getSocialMediaURL = ( LINK, SOCIAL_MEDIA_TYPE ) => {
@@ -136,37 +190,86 @@ const SocialMediaAdd = ( { list, onChange } ) => {
 			return null;
 		}
 
-		// Regular expression to extract handle from a URL or handle string
-		const handleRegex = /^@?(.+)$/;
-		const urlRegex = /^(?:https?:\/\/)?(?:www\.)?([^]+)\/(.+)$/i;
-
-		// Check if LINK is a valid URL
-		const urlMatch = LINK?.match( urlRegex );
-
-		if ( urlMatch ) {
-			if ( SOCIAL_MEDIA_TYPE === 'youtube' ) {
-				return `https://${ socialMediaDomain }${ urlMatch[ 2 ].slice(
-					1
-				) }`;
+		if ( SOCIAL_MEDIA_TYPE === 'google' ) {
+			// Check if the input URL is already in the correct format
+			if ( LINK.startsWith( `https://www.${ socialMediaDomain }/` ) ) {
+				return LINK;
 			}
-			return `https://${ socialMediaDomain }${ urlMatch[ 2 ] }`;
+
+			// Replace spaces with '+' and handle special characters
+			const searchQuery = LINK?.replace( / /g, '+' )?.replace(
+				/%2B/g,
+				'+'
+			);
+
+			return `https://www.${ socialMediaDomain }/${ searchQuery }`;
 		}
 
-		// If LINK is not a URL, check if it's a social media handle
-		const handleMatch = LINK?.match( handleRegex );
-		if ( handleMatch && SOCIAL_MEDIA_TYPE ) {
-			if ( socialMediaDomain ) {
-				return `https://www.${ socialMediaDomain }${ handleMatch[ 1 ] }`;
-			}
+		let handle;
+		let url;
+		let urlParts;
+		switch ( SOCIAL_MEDIA_TYPE.toLowerCase() ) {
+			case 'twitter':
+			case 'facebook':
+			case 'instagram':
+				urlParts = LINK.split( '/' ).filter(
+					( part, index ) =>
+						part &&
+						( index === LINK.split( '/' ).length - 1 ||
+							! part.includes( '.' ) )
+				);
+				handle =
+					urlParts?.pop()?.replace( 'http:' )?.replace( 'https:' ) ||
+					'';
+				if ( handle === undefined ) {
+					url = `https://${ socialMediaHandles[ SOCIAL_MEDIA_TYPE ] }`;
+				}
+				url = `https://${ socialMediaHandles[ SOCIAL_MEDIA_TYPE ] }${ handle }`;
+				try {
+					new URL( url );
+				} catch ( e ) {
+					url = `https://${ socialMediaHandles[ SOCIAL_MEDIA_TYPE ] }`;
+				}
+				break;
+			case 'linkedin':
+				const match = LINK.match(
+					/(linkedin\.com\/in[\/]{0,1})(.*)\/?$/
+				);
+				const fullUrl = match?.[ 1 ] ?? '';
+				if ( ! fullUrl ) {
+					handle = LINK;
+				} else {
+					handle = match?.[ 2 ] ?? '';
+				}
+				if ( ! handle ) {
+					url = `https://${ socialMediaHandles[ SOCIAL_MEDIA_TYPE ] }`;
+				}
+				url = `https://${ socialMediaHandles[ SOCIAL_MEDIA_TYPE ] }${ handle }`;
+				try {
+					new URL( url );
+				} catch ( e ) {
+					url = `https://${ socialMediaHandles[ SOCIAL_MEDIA_TYPE ] }`;
+				}
+				break;
+			case 'youtube':
+			case 'google':
+			case 'yelp':
+				handle = extractHandle( LINK ) ?? '';
+				if ( handle === undefined ) {
+					url = `https://${ socialMediaHandles[ SOCIAL_MEDIA_TYPE ] }`;
+				}
+				url = `https://${ socialMediaHandles[ SOCIAL_MEDIA_TYPE ] }${ handle }`;
+				try {
+					new URL( url );
+				} catch ( e ) {
+					url = `https://${ socialMediaHandles[ SOCIAL_MEDIA_TYPE ] }`;
+				}
+				break;
+			default:
+				url = LINK;
+				break;
 		}
-
-		// If LINK is a handle without SOCIAL_MEDIA_TYPE, return null
-		if ( handleMatch ) {
-			return null;
-		}
-
-		// If the input is neither a URL nor a handle, return null
-		return null;
+		return url;
 	};
 
 	const filterList = ( socialMediaItemList ) => {
@@ -193,6 +296,7 @@ const SocialMediaAdd = ( { list, onChange } ) => {
 			{
 				...selectedSocialMedia,
 				url: link,
+				valid: validateSocialMediaURL( link, type ),
 			},
 		];
 		onChange( newList );
@@ -206,6 +310,7 @@ const SocialMediaAdd = ( { list, onChange } ) => {
 				return {
 					...sm,
 					url: getSocialMediaURL( value, id ),
+					valid: validateSocialMediaURL( value, id ),
 				};
 			}
 			return sm;
@@ -213,18 +318,27 @@ const SocialMediaAdd = ( { list, onChange } ) => {
 		onChange( newList );
 	};
 
-	const updatedList = list.map( ( sm ) => {
-		return {
-			...sm,
-			url: getSocialMediaURL( sm.url, sm.id ),
-			icon: socialMediaList.find( ( item ) => item.id === sm.id )?.icon,
-		};
-	} );
+	const updatedList = useMemo( () => {
+		return list.map( ( sm ) => {
+			const url = getSocialMediaURL( sm.url, sm.id );
+			const valid = validateSocialMediaURL( url, sm.id );
+			return {
+				...sm,
+				url,
+				valid,
+				icon: socialMediaList.find( ( item ) => item.id === sm.id )
+					?.icon,
+			};
+		} );
+	}, [ list ] );
 
 	const socialMediaRender = () => {
 		if ( selectedSocialMedia ) {
+			const placeholderText = selectedSocialMedia
+				? getPlaceholder( selectedSocialMedia.name )
+				: 'Enter your account URL';
 			return (
-				<div className="h-[50px] w-[520px] rounded-[25px] bg-white flex items-center pl-[23px]">
+				<div className="h-[50px] w-[520px] rounded-[25px] bg-white flex items-center">
 					<Input
 						name="socialMediaURL"
 						value={ socialMediaURL }
@@ -236,9 +350,9 @@ const SocialMediaAdd = ( { list, onChange } ) => {
 								node.focus();
 							}
 						} }
-						inputClassName="!pr-10 !border-0 !bg-transparent !shadow-none focus:!ring-0"
+						inputClassName="!pr-10 !pl-11 !border-0 !bg-transparent !shadow-none focus:!ring-0"
 						className="w-full"
-						placeholder={ `Enter your ${ selectedSocialMedia.name } URL` }
+						placeholder={ placeholderText }
 						noBorder
 						prefixIcon={
 							<selectedSocialMedia.icon className="text-nav-active inline-block" />
@@ -325,24 +439,33 @@ const SocialMediaAdd = ( { list, onChange } ) => {
 				Social Media
 			</div>
 
-			<div className="flex items-center gap-4 flex-wrap">
+			<div className="flex items-start gap-4 flex-wrap">
 				{ updatedList?.length > 0 && (
-					<div className="flex items-center gap-4 flex-wrap">
+					<div className="flex items-start gap-4 flex-wrap">
 						{ updatedList.map( ( sm ) => (
-							<SocialMediaItem
-								key={ sm.id }
-								socialMedia={ sm }
-								onRemove={ () => {
-									onChange(
-										updatedList.filter(
-											( item ) => item.id !== sm.id
-										)
-									);
-								} }
-								onEdit={ ( url ) =>
-									handleEditLink( sm.id, url )
-								}
-							/>
+							<div key={ sm.id }>
+								<SocialMediaItem
+									socialMedia={ sm }
+									onRemove={ () => {
+										onChange(
+											updatedList.filter(
+												( item ) => item.id !== sm.id
+											)
+										);
+									} }
+									onEdit={ ( url ) =>
+										handleEditLink( sm.id, url )
+									}
+								/>
+								{ ! sm.valid && (
+									<div className="p-3">
+										<p className="!m-0 !p-0 !text-alert-error !text-sm">
+											This might not be a valid{ ' ' }
+											{ sm.name } URL
+										</p>
+									</div>
+								) }
+							</div>
 						) ) }
 					</div>
 				) }

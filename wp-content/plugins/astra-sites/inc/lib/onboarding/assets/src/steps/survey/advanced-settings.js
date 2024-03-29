@@ -94,7 +94,11 @@ const AdvancedSettings = () => {
 				showSection ? 'show-section' : 'hidden-section'
 			}` }
 		>
-			<p className="label-text row-label" onClick={ toggleSection }>
+			<p
+				className="label-text row-label"
+				onClick={ toggleSection }
+				role="presentation"
+			>
 				{ __( 'Advanced Options', 'astra-sites' ) }
 				<span className="advanced-options-icons">
 					{ showSection ? ICONS.angleUP : ICONS.angleDown }

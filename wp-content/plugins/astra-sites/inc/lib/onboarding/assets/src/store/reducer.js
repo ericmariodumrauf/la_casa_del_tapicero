@@ -12,18 +12,23 @@ if ( astraSitesVars.default_page_builder ) {
 			: astraSitesVars.default_page_builder;
 }
 
+export const siteLogoDefault = {
+	id: '',
+	thumbnail: '',
+	url: '',
+	width: 120,
+};
+
 export const initialState = {
 	allSitesData: astraSitesVars.all_sites || {},
 	allCategories: astraSitesVars.allCategories || [],
 	allCategoriesAndTags: astraSitesVars.allCategoriesAndTags || [],
-	currentIndex: currentIndexKey,
+	aiActivePallette: null,
+	aiActiveTypography: null,
+	aiSiteLogo: siteLogoDefault,
+	currentIndex: 'ai-builder' === builderKey ? 1 : currentIndexKey,
 	currentCustomizeIndex: 0,
-	siteLogo: {
-		id: '',
-		thumbnail: '',
-		url: '',
-		width: 120,
-	},
+	siteLogo: siteLogoDefault,
 	activePaletteSlug: 'default',
 	activePalette: {},
 	typography: {},

@@ -64,6 +64,7 @@ const ImportSite = () => {
 	 * @param {string} text      Text received from the AJAX call.
 	 * @param {string} code      Error code received from the AJAX call.
 	 * @param {string} solution  Solution provided for the current error.
+	 * @param {string} stack
 	 */
 	const report = (
 		primary = '',
@@ -300,6 +301,8 @@ const ImportSite = () => {
 
 	/**
 	 * Activate Plugin
+	 *
+	 * @param {Object} plugin
 	 */
 	const activatePlugin = ( plugin ) => {
 		percentage += 2;
@@ -511,6 +514,8 @@ const ImportSite = () => {
 
 	/**
 	 * Reset a chunk of posts.
+	 *
+	 * @param {Object} chunk
 	 */
 	const performPostsReset = async ( chunk ) => {
 		const data = new FormData();
@@ -1189,8 +1194,7 @@ const ImportSite = () => {
 	 */
 	const importSpectraSettings = async () => {
 		const spectraSettings =
-			encodeURI( templateResponse[ 'astra-site-spectra-settings' ] ) ||
-			'';
+			templateResponse[ 'astra-site-spectra-options' ] || '';
 
 		if ( '' === spectraSettings || 'null' === spectraSettings ) {
 			return true;
@@ -1595,9 +1599,9 @@ const ImportSite = () => {
 	};
 
 	useEffect( () => {
-		window.addEventListener('beforeunload', preventRefresh); // eslint-disable-line
+		window.addEventListener( 'beforeunload', preventRefresh ); // eslint-disable-line
 		return () => {
-		  window.removeEventListener('beforeunload', preventRefresh); // eslint-disable-line
+			window.removeEventListener( 'beforeunload', preventRefresh ); // eslint-disable-line
 		};
 	}, [ importPercent ] ); // Add importPercent as a dependency.
 

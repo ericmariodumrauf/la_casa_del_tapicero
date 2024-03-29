@@ -2,9 +2,11 @@ import { ClipboardIcon } from '@heroicons/react/24/outline';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { STORE_KEY } from '../store';
 import { removeLocalStorageItem } from '../helpers';
-import { initialState } from '../store/reducer';
+import { defaultOnboardingAIState } from '../store/reducer';
 import Modal from './modal';
 import Button from './button';
+import { useStateValue } from '../../../store/store';
+import { siteLogoDefault } from '../../../store/reducer';
 
 const ContinueProgressModal = () => {
 	const { setContinueProgressModal, setWebsiteOnboardingAIDetails } =
@@ -15,12 +17,19 @@ const ContinueProgressModal = () => {
 		return {
 			continueProgressModal: getContinueProgressModalInfo(),
 		};
-	} );
+	}, [] );
+	const [ , dispatch ] = useStateValue();
 
 	const handleStartOver = () => {
 		removeLocalStorageItem( 'ai-onboarding-details' );
-		setWebsiteOnboardingAIDetails( initialState.onboardingAI );
+		setWebsiteOnboardingAIDetails( defaultOnboardingAIState );
 		setContinueProgressModal( { open: false } );
+		dispatch( {
+			type: 'set',
+			aiSiteLogo: siteLogoDefault,
+			aiActiveTypography: null,
+			aiActivePallette: null,
+		} );
 	};
 
 	const handleContinue = () => {
